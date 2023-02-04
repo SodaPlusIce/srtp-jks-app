@@ -20,6 +20,10 @@ class _CenterPageState extends State<CenterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // leading: Icon(Icons.arrow_back_outlined),
+        title: const Text('智能公交——预约响应'),
+      ),
       body: Center(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +41,7 @@ class _CenterPageState extends State<CenterPage> {
                           borderRadius: BorderRadius.circular(42)),
                       child: ClipOval(
                         child: Image.asset(
-                          'images/lake.jpg',
+                          'assets/images/lake.jpg',
                           width: 85,
                           height: 85,
                           fit: BoxFit.cover,

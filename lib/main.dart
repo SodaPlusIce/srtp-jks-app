@@ -45,9 +45,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('智能公交——预约响应'),
-      ),
+      // appBar: AppBar(
+      //   // leading: Icon(Icons.arrow_back_outlined),
+      //   title: const Text('智能公交——预约响应'),
+      // ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

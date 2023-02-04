@@ -203,6 +203,10 @@ class _LocationPageState extends State<LocationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // leading: Icon(Icons.arrow_back_outlined),
+        title: const Text('智能公交——预约响应'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
