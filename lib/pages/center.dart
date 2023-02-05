@@ -8,7 +8,7 @@ import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import './location.dart';
-
+import './user_center/user_information.dart';
 class CenterPage extends StatefulWidget {
   const CenterPage({Key? key}) : super(key: key);
 
@@ -22,7 +22,7 @@ class _CenterPageState extends State<CenterPage> {
     return Scaffold(
       appBar: AppBar(
         // leading: Icon(Icons.arrow_back_outlined),
-        title: const Text('智能公交——预约响应'),
+        title: const Text('智慧公交——主页'),
       ),
       body: Center(
         child: Column(
@@ -49,9 +49,10 @@ class _CenterPageState extends State<CenterPage> {
                       ),
                     ),
                     const Padding(padding: EdgeInsets.all(10)),
-                    const Text(
-                      "cdw",
-                      style: TextStyle(fontSize: 20),
+                    TextButton(onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const UserInfoPage()));
+                    },
+                    child: const Text("cdw"),
                     ),
                     const Padding(padding: EdgeInsets.all(30)),
                     IconButton(
