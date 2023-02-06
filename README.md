@@ -34,5 +34,5 @@
 ## 2023.2.6
 1. 消除<code>map.dart</code>中不必要的浮动按钮，line795
 2. 添加个人中心页面，修改颜色和部分布局 <code>map.dart</code> line328
-3. 修改提交方式
+3. 修改提交方式为gitee
 
