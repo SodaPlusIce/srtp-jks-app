@@ -32,7 +32,13 @@
 
 或者：理一下大屏的思路，然后大屏调了哪些接口caratstop这种等等，app端同样也调一次。
 ## 2023.2.6
+
+cdw
+
 1. 消除<code>map.dart</code>中不必要的浮动按钮，line795
 2. 添加个人中心页面，修改颜色和部分布局 <code>map.dart</code> line328
 3. 修改提交方式为gitee
 
+zcc
+
+测试是否链接到gitee
