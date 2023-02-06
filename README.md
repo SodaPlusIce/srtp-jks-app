@@ -38,6 +38,7 @@ cdw
 1. 消除<code>map.dart</code>中不必要的浮动按钮，line795
 2. 添加个人中心页面，修改颜色和部分布局 <code>map.dart</code> line328
 3. 修改提交方式为gitee
+> 由于不会将数据返回到页面中，所以无法获得出生日期等
 
 zcc
 

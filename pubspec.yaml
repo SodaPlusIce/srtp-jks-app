@@ -41,6 +41,13 @@ dependencies:
   dio: ^4.0.6
   url_launcher: ^6.1.7
   flutter_speed_dial: ^6.2.0
+  flutter_picker: 1.1.5
+    # 弹框 https://pub.dev/packages/fluttertoast#-installing-tab-
+  fluttertoast: ^7.0.4
+    # 时间格式转换 https://pub.dev/packages/date_format
+  date_format: 1.0.8
+  flutter_cupertino_datetime_picker: ^3.0.0
+  image_pickers: ^1.0.8+7
 
 dev_dependencies:
   flutter_test:
