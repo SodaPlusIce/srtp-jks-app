@@ -47,7 +47,6 @@ dependencies:
     # 时间格式转换 https://pub.dev/packages/date_format
   date_format: 1.0.8
   flutter_cupertino_datetime_picker: ^3.0.0
-  image_pickers: ^1.0.8+7
 
 dev_dependencies:
   flutter_test:
