@@ -4,6 +4,11 @@ import 'dart:io';
 import 'package:amap_flutter_location/amap_flutter_location.dart';
 import 'package:amap_flutter_location/amap_location_option.dart';
 import 'package:flutter/material.dart';
+import 'package:jtjs/pages/user_center/user_assistant.dart';
+import 'package:jtjs/pages/user_center/user_collection.dart';
+import 'package:jtjs/pages/user_center/user_history.dart';
+import 'package:jtjs/pages/user_center/user_message.dart';
+import 'package:jtjs/pages/user_center/user_wallet.dart';
 import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -74,7 +79,10 @@ class _CenterPageState extends State<CenterPage> {
                       ),
                       const Padding(padding: EdgeInsets.all(30)),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => const UserMessPage()));
+                          },
                           icon: const Icon(Icons.chat_outlined))
                     ]),
               ),
@@ -82,6 +90,7 @@ class _CenterPageState extends State<CenterPage> {
             const SizedBox(
               height: 10,
             ),
+            //包括历史记录和收藏
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -103,12 +112,14 @@ class _CenterPageState extends State<CenterPage> {
                         onPressed: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return const LocationPage();
+                            return const UserHisPage();
                           }));
                         },
                         label: const Text(
                           '历史记录',
                           style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
@@ -129,19 +140,20 @@ class _CenterPageState extends State<CenterPage> {
                     child: TextButton.icon(
                         icon: const Icon(
                           Icons.star_border,
-                          color: Color.fromARGB(250, 74, 185, 255),
                         ),
                         style: ElevatedButton.styleFrom(
                             fixedSize: const Size(120, 60)),
                         onPressed: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return const LocationPage();
+                            return const UserCollPage();
                           }));
                         },
                         label: const Text(
                           '我的收藏',
                           style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         )),
@@ -149,6 +161,7 @@ class _CenterPageState extends State<CenterPage> {
                 ),
               ],
             ),
+            //包括钱包余额和客服中心
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -169,13 +182,17 @@ class _CenterPageState extends State<CenterPage> {
                         onPressed: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return const LocationPage();
+                            return const UserWallPage();
                           }));
                         },
-                        label: const Text('钱包余额',
-                            style: TextStyle(
-                              color: Colors.black,
-                            )),
+                        label: const Text(
+                          '钱包余额',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
                       )),
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
@@ -196,19 +213,29 @@ class _CenterPageState extends State<CenterPage> {
                         onPressed: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return const LocationPage();
+                            return const UserAssistPage();
                           }));
                         },
-                        label: const Text('客服中心',
-                            style: TextStyle(
-                              color: Colors.black,
-                            )),
+                        label: const Text(
+                          '客服中心',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
                       )),
                 ),
               ],
             ),
-            SizedBox(
-              height: 50,
+            Container(
+              // shape: RoundedRectangleBorder(
+              //   borderRadius: BorderRadius.circular(20),
+              // ),
+              margin: const EdgeInsets.all(20),
+              // color: const Color.fromARGB(250, 250, 252, 254),
+              // elevation: 10,
+              // shadowColor: const Color.fromARGB(250, 231, 241, 251),
               child: Row(
                 children: [
                   const Padding(padding: EdgeInsets.all(10)),
@@ -219,37 +246,97 @@ class _CenterPageState extends State<CenterPage> {
                           TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
                     ),
                   ),
-                  const Padding(padding: EdgeInsets.all(60)),
-                  SizedBox(
-                    height: 48,
-                    width: 48,
-                    child: TextButton.icon(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)))),
-                      label: const Text(""),
-                      icon: const Icon(Icons.add,),
-                      // child:  const Text("圆角"),
+                  const SizedBox(width: 90),
+                  IconButton(
+                    onPressed: () {},
+                    color: Colors.blueAccent,
+                    icon: const Icon(
+                      Icons.add,
                     ),
+                    // child:  const Text("圆角"),
                   ),
-                  SizedBox(
-                    height: 48,
-                    width: 48,
-                    child: TextButton.icon(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)))),
-                      label: const Text(""),
-                      icon: const Icon(Icons.list,),
+                  IconButton(
+                    onPressed: () {},
+                    color: Colors.blueAccent,
+                    icon: const Icon(
+                      Icons.list,
                     ),
                   ),
                 ],
               ),
             ),
+            //文件夹内容（目前是循环体）
+            Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 2, 20, 0),
+                  child: const ListTile(
+                    leading: Icon(Icons.system_update_tv_outlined),
+                    title: Text(
+                      "南京市",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    subtitle: Text("5个"),
+                  ),
+                ),
+                const Divider(),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 2, 20, 0),
+                  child: const ListTile(
+                    leading: Icon(Icons.system_update_tv_outlined),
+                    title: Text(
+                      "南京市",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    subtitle: Text("5个"),
+                  ),
+                ),
+                const Divider(),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 2, 20, 0),
+                  child: const ListTile(
+                    leading: Icon(Icons.system_update_tv_outlined),
+                    title: Text(
+                      "南京市",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    subtitle: Text("5个"),
+                  ),
+                ),
+                const Divider(),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 2, 20, 0),
+                  child: const ListTile(
+                    leading: Icon(Icons.system_update_tv_outlined),
+                    title: Text(
+                      "南京市",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    subtitle: Text("5个"),
+                  ),
+                ),
+                const Divider(),
+              ],
+            )
+
+            // )
+            // ),
           ],
         ),
       ),

@@ -43,3 +43,8 @@ cdw
 zcc
 
 测试是否链接到gitee
+## 2023.2.7 
+cdw
+
+1. 基本完成了个人中心页面的搭建
+2. 了解了点击整个卡片的组件!(Inkwell)[https://www.likecs.com/ask-278534.html]
