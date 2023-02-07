@@ -11,7 +11,8 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:get/get.dart';
+import 'package:getwidget/getwidget.dart';
 const double _kItemExtent = 32.0;
 const List<String> _stationNames = <String>[
   "换乘中心", //0
@@ -317,498 +318,502 @@ class _MapPageState extends State<MapPage> {
         //     : null,
         title: const Text("智慧公交--预约"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin:const EdgeInsets.all(5),
-                  color: Colors.greenAccent,
-                  shadowColor: Colors.white54,
-                  elevation:20 ,
-                  child: Column(
-                    children: [
-                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                        Visibility(
-                            visible: _stepIndex != 0,
-                            maintainSize: true,
-                            maintainState: true,
-                            maintainAnimation: true,
-                            child: IconButton(
-                              icon: const Icon(Icons.west_outlined),
-                              onPressed: () {
-                                setState(() {
-                                  _stepIndex--;
-                                  if (_stepIndex == 0) {
-                                    basic = true;
-                                    title = "智能公交——预约";
-                                    reserve = false;
-                                    gonow = false;
-                                    order = false;
-                                  } else if (_stepIndex == 1) {
-                                    reserve = isReserve;
-                                    gonow = !isReserve;
-                                    passNum = false;
-                                  } else if (_stepIndex == 2) {
-                                    passNum = true;
-                                    order = false;
-                                  }
-                                });
-                              },
-                            )),
-                        const Padding(padding: EdgeInsets.only(left: 95)),
-                        Text(
-                          _stepName[_stepIndex],
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const Padding(padding: EdgeInsets.only(left: 95)),
-                        Visibility(
-                            visible: _stepIndex != 3,
-                            maintainSize: true,
-                            maintainState: true,
-                            maintainAnimation: true,
-                            child: IconButton(
-                              icon: const Icon(Icons.east_outlined),
-                              onPressed: () {
-                                setState(() {
-                                  _stepIndex++;
-                                  if (_stepIndex == 1) {
-                                    basic = false;
-                                    if (!isReserve) {
-                                      gonow = true; //不选择出行方式直接点击下一步icon默认是即刻出发
-                                      title = "现在出发";
-                                    } else {
-                                      reserve = true;
-                                      title = "预约出行";
-                                    }
-                                  } else if (_stepIndex == 2) {
-                                    basic = false;
-                                    gonow = false;
-                                    reserve = false;
-                                    passNum = true;
-                                  } else if (_stepIndex == 3) {
-                                    passNum = false;
-                                    order = true;
-                                  }
-                                });
-                              },
-                            )),
-                      ]),
-                      // 步骤一：选择出行方式
-                      Visibility(
-                          visible: basic,
-                          child: Container(
-                            height: 200,
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          const Text(
-                                            '选择出行方式',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const Padding(padding: EdgeInsets.all(2)),
-                                          IconButton(
-                                              padding: const EdgeInsets.all(0),
-                                              icon: const Icon(Icons.info_outlined),
-                                              onPressed: () {
-                                                showDeleteConfirmDialog();
-                                              })
-                                        ])),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      fixedSize: const Size(180, 50)),
-                                  onPressed: () {
-                                    setState(() {
-                                      basic = false;
-                                      reserve = true;
-                                      gonow = false;
-                                      _stepIndex++;
-                                      title = "预约出行";
-                                      isReserve = true;
-                                    });
-                                  },
-                                  child: const Text(
-                                    "预约出行",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                                const Padding(padding: EdgeInsets.all(5)),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      fixedSize: const Size(180, 50)),
-                                  onPressed: () {
-                                    setState(() {
-                                      basic = false;
-                                      gonow = true;
-                                      reserve = false;
-                                      _stepIndex++;
-                                      title = "现在出发";
-                                      isReserve = false;
-                                    });
-                                  },
-                                  child: const Text('现在出发', style: TextStyle(fontSize: 18)),
-                                ),
-                              ],
-                            ),
-                          )),
-                      // 步骤二：预约出行
-                      Visibility(
-                          visible: reserve,
-                          child: Container(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Padding(padding: EdgeInsets.all(7)),
-                                  const Text(
-                                    '注意：仅支持提前一天预约，预约时间前后五分钟到车',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const Padding(padding: EdgeInsets.all(5)),
-                                  CupertinoButton(
-                                    onPressed: () => {},
-                                    padding: const EdgeInsets.all(0),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          fixedSize: const Size(180, 50)),
-                                      onPressed: () => _showDialog(
-                                        CupertinoDatePicker(
-                                          initialDateTime: dateTime,
-                                          mode: CupertinoDatePickerMode.time,
-                                          use24hFormat: true,
-                                          // This is called when the user changes the dateTime.
-                                          onDateTimeChanged: (DateTime newDateTime) {
-                                            setState(() {
-                                              dateTime = newDateTime;
-                                              reserveTime =
-                                              '${dateTime.year}-${dateTime.month}-${dateTime.day}'
-                                                  ' ${dateTime.hour}:${dateTime.minute}';
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      child: Text(
-                                        reserveTime,
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
-                                  const Padding(padding: EdgeInsets.all(5)),
-                                  CupertinoButton(
-                                      padding: const EdgeInsets.all(0),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            fixedSize: const Size(180, 50)),
-                                        onPressed: () => _showDialog(
-                                          CupertinoPicker(
-                                            magnification: 1.22,
-                                            squeeze: 1.2,
-                                            useMagnifier: true,
-                                            itemExtent: _kItemExtent,
-                                            // This is called when selected item is changed.
-                                            onSelectedItemChanged: (int selectedItem) {
-                                              setState(() {
-                                                _selectedOnStation = selectedItem;
-                                                _selectedOnStationName =
-                                                _stationNames[_selectedOnStation];
-                                              });
-                                            },
-                                            children: List<Widget>.generate(
-                                                _stationNames.length, (int index) {
-                                              return Center(
-                                                child: Text(
-                                                  _stationNames[index],
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                        ),
-                                        child: Text(_selectedOnStationName,
-                                            style: const TextStyle(fontSize: 18)),
-                                      ),
-                                      onPressed: () {}),
-                                  const Padding(padding: EdgeInsets.all(5)),
-                                  CupertinoButton(
-                                      padding: const EdgeInsets.all(0),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            fixedSize: const Size(180, 50)),
-                                        onPressed: () => _showDialog(
-                                          CupertinoPicker(
-                                            magnification: 1.22,
-                                            squeeze: 1.2,
-                                            useMagnifier: true,
-                                            itemExtent: _kItemExtent,
-                                            // This is called when selected item is changed.
-                                            onSelectedItemChanged: (int selectedItem) {
-                                              setState(() {
-                                                _selectedOffStation = selectedItem;
-                                                _selectedOffStationName =
-                                                _stationNames[_selectedOffStation];
-                                              });
-                                            },
-                                            children: List<Widget>.generate(
-                                                _stationNames.length, (int index) {
-                                              return Center(
-                                                child: Text(
-                                                  _stationNames[index],
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                        ),
-                                        child: Text(_selectedOffStationName,
-                                            style: const TextStyle(fontSize: 18)),
-                                      ),
-                                      onPressed: () {}),
-                                ],
-                              ))),
-                      // 步骤二：现在出发
-                      Visibility(
-                          visible: gonow,
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Padding(padding: EdgeInsets.all(12)),
-                                CupertinoButton(
-                                    padding: const EdgeInsets.all(0),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          fixedSize: const Size(180, 50)),
-                                      onPressed: () => _showDialog(
-                                        CupertinoPicker(
-                                          magnification: 1.22,
-                                          squeeze: 1.2,
-                                          useMagnifier: true,
-                                          itemExtent: _kItemExtent,
-                                          // This is called when selected item is changed.
-                                          onSelectedItemChanged: (int selectedItem) {
-                                            setState(() {
-                                              _selectedOnStationNow = selectedItem;
-                                              _selectedOnStationNameNow =
-                                              _stationNames[_selectedOnStationNow];
-                                            });
-                                          },
-                                          children: List<Widget>.generate(
-                                              _stationNames.length, (int index) {
-                                            return Center(
-                                              child: Text(
-                                                _stationNames[index],
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      ),
-                                      child: Text(_selectedOnStationNameNow,
-                                          style: const TextStyle(fontSize: 18)),
-                                    ),
-                                    onPressed: () {}),
-                                const Padding(padding: EdgeInsets.all(5)),
-                                CupertinoButton(
-                                    padding: const EdgeInsets.all(0),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          fixedSize: const Size(180, 50)),
-                                      onPressed: () => _showDialog(
-                                        CupertinoPicker(
-                                          magnification: 1.22,
-                                          squeeze: 1.2,
-                                          useMagnifier: true,
-                                          itemExtent: _kItemExtent,
-                                          // This is called when selected item is changed.
-                                          onSelectedItemChanged: (int selectedItem) {
-                                            setState(() {
-                                              _selectedOffStationNow = selectedItem;
-                                              _selectedOffStationNameNow =
-                                              _stationNames[_selectedOffStationNow];
-                                            });
-                                          },
-                                          children: List<Widget>.generate(
-                                              _stationNames.length, (int index) {
-                                            return Center(
-                                              child: Text(
-                                                _stationNames[index],
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      ),
-                                      child: Text(_selectedOffStationNameNow,
-                                          style: const TextStyle(fontSize: 18)),
-                                    ),
-                                    onPressed: () {}),
-                              ],
-                            ),
-                          )),
-                      // 步骤三：填写人数
-                      Visibility(
-                          visible: passNum,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("请选择乘客数：$_passNum人", style: TextStyle(fontSize: 16)),
-                              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _passNum = 1;
-                                      });
-                                    },
-                                    child: Text("1人")),
-                                const Padding(padding: EdgeInsets.all(5)),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _passNum = 2;
-                                      });
-                                    },
-                                    child: Text("2人")),
-                                const Padding(padding: EdgeInsets.all(5)),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _passNum = 3;
-                                      });
-                                    },
-                                    child: Text("3人")),
-                              ]),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _passNum = 4;
-                                        });
-                                      },
-                                      child: Text("4人")),
-                                  const Padding(padding: EdgeInsets.all(5)),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _passNum = 5;
-                                        });
-                                      },
-                                      child: Text("5人")),
-                                  const Padding(padding: EdgeInsets.all(5)),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _passNum = 6;
-                                        });
-                                      },
-                                      child: Text("6人")),
-                                ],
-                              )
-                            ],
-                          )),
-                      // 步骤四：提交订单
-                      Visibility(
-                          visible: order,
-                          child: Container(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                textBaseline: TextBaseline.ideographic,
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                children: [
-                                  Column(
-
+      body:  GFFloatingWidget(
+        //垂直偏移量
+        // verticalPosition: MediaQuery.of(context).size.height * 0.1,
+        // // 水平偏移量
+        // horizontalPosition: MediaQuery.of(context).size.width * 0.1,
+        //正文内容
+        body: AMapWidget(
+          // 隐私政策包含高德 必须填写
+          privacyStatement: ConstConfig.amapPrivacyStatement,
+          apiKey: ConstConfig.amapApiKeys,
+          // 初始化地图中心店
+          initialCameraPosition: currentLocation,
+          //定位小蓝点
+          myLocationStyleOptions: MyLocationStyleOptions(
+            true,
+          ),
+          // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
+          mapType: _mapType,
+          // 缩放级别范围
+          minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
+          // onPoiTouched: _onMapPoiTouched,
+          markers: Set<Marker>.of(_initMarkerMap.values),
+          compassEnabled: true,
+          trafficEnabled: true,
+          // 地图创建成功时返回AMapController
+          onMapCreated: (AMapController controller) {
+            // mapController = controller;
+            setState(() {
+              mapController = controller;
+              getApprovalNumber();
+            });
+          },
+        ),
+        // const SizedBox(height: 1,),
+        //背景是否模糊
+        // showBlurness: true,
+        //背景模糊的颜色
+        blurnessColor: Colors.blue,
+        child: Center(
+          child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              margin:const EdgeInsets.fromLTRB(10, 10, 0, 0),
+              color: Colors.greenAccent,
+              shadowColor: Colors.white54,
+              elevation:20 ,
+              child: Column(
+                children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Visibility(
+                        visible: _stepIndex != 0,
+                        maintainSize: true,
+                        maintainState: true,
+                        maintainAnimation: true,
+                        child: IconButton(
+                          icon: const Icon(Icons.west_outlined),
+                          onPressed: () {
+                            setState(() {
+                              _stepIndex--;
+                              if (_stepIndex == 0) {
+                                basic = true;
+                                title = "智能公交——预约";
+                                reserve = false;
+                                gonow = false;
+                                order = false;
+                              } else if (_stepIndex == 1) {
+                                reserve = isReserve;
+                                gonow = !isReserve;
+                                passNum = false;
+                              } else if (_stepIndex == 2) {
+                                passNum = true;
+                                order = false;
+                              }
+                            });
+                          },
+                        )),
+                    const Padding(padding: EdgeInsets.only(left: 95)),
+                    Text(
+                      _stepName[_stepIndex],
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const Padding(padding: EdgeInsets.only(left: 95)),
+                    Visibility(
+                        visible: _stepIndex != 3,
+                        maintainSize: true,
+                        maintainState: true,
+                        maintainAnimation: true,
+                        child: IconButton(
+                          icon: const Icon(Icons.east_outlined),
+                          onPressed: () {
+                            setState(() {
+                              _stepIndex++;
+                              if (_stepIndex == 1) {
+                                basic = false;
+                                if (!isReserve) {
+                                  gonow = true; //不选择出行方式直接点击下一步icon默认是即刻出发
+                                  title = "现在出发";
+                                } else {
+                                  reserve = true;
+                                  title = "预约出行";
+                                }
+                              } else if (_stepIndex == 2) {
+                                basic = false;
+                                gonow = false;
+                                reserve = false;
+                                passNum = true;
+                              } else if (_stepIndex == 3) {
+                                passNum = false;
+                                order = true;
+                              }
+                            });
+                          },
+                        )),
+                  ]),
+                  // 步骤一：选择出行方式
+                  Visibility(
+                      visible: basic,
+                      child: Container(
+                        height: 200,
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("订单类型：${isReserve ? "预约出行" : "现在出发"}",
-                                          style: const TextStyle(fontSize: 16)),
-                                      Visibility(
-                                          visible: isReserve,
-                                          child: Text(
-                                              "上车时间：${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}",
-                                              style: const TextStyle(fontSize: 16))),
-                                      Text(
-                                          "上车点：${isReserve ? _selectedOnStationName : _selectedOnStationNameNow}",
-                                          style: const TextStyle(fontSize: 16)),
-                                      Text(
-                                          "目的地：${isReserve ? _selectedOffStationName : _selectedOffStationNameNow}",
-                                          style: const TextStyle(fontSize: 16)),
-                                      Text("乘客数：$_passNum",
-                                          style: const TextStyle(fontSize: 16)),
-                                      const Padding(padding: EdgeInsets.all(10)),
-                                      Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {},
-                                              style: ButtonStyle(
-                                                  shape: MaterialStateProperty.all(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius.circular(20)))),
-                                              child: const Text("提交订单"),
+                                      const Text(
+                                        '选择出行方式',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Padding(padding: EdgeInsets.all(2)),
+                                      IconButton(
+                                          padding: const EdgeInsets.all(0),
+                                          icon: const Icon(Icons.info_outlined),
+                                          onPressed: () {
+                                            showDeleteConfirmDialog();
+                                          })
+                                    ])),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(180, 50)),
+                              onPressed: () {
+                                setState(() {
+                                  basic = false;
+                                  reserve = true;
+                                  gonow = false;
+                                  _stepIndex++;
+                                  title = "预约出行";
+                                  isReserve = true;
+                                });
+                              },
+                              child: const Text(
+                                "预约出行",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            const Padding(padding: EdgeInsets.all(5)),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(180, 50)),
+                              onPressed: () {
+                                setState(() {
+                                  basic = false;
+                                  gonow = true;
+                                  reserve = false;
+                                  _stepIndex++;
+                                  title = "现在出发";
+                                  isReserve = false;
+                                });
+                              },
+                              child: const Text('现在出发', style: TextStyle(fontSize: 18)),
+                            ),
+                          ],
+                        ),
+                      )),
+                  // 步骤二：预约出行
+                  Visibility(
+                      visible: reserve,
+                      child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Padding(padding: EdgeInsets.all(7)),
+                              const Text(
+                                '注意：仅支持提前一天预约，预约时间前后五分钟到车',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.all(5)),
+                              CupertinoButton(
+                                onPressed: () => {},
+                                padding: const EdgeInsets.all(0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      fixedSize: const Size(180, 50)),
+                                  onPressed: () => _showDialog(
+                                    CupertinoDatePicker(
+                                      initialDateTime: dateTime,
+                                      mode: CupertinoDatePickerMode.time,
+                                      use24hFormat: true,
+                                      // This is called when the user changes the dateTime.
+                                      onDateTimeChanged: (DateTime newDateTime) {
+                                        setState(() {
+                                          dateTime = newDateTime;
+                                          reserveTime =
+                                          '${dateTime.year}-${dateTime.month}-${dateTime.day}'
+                                              ' ${dateTime.hour}:${dateTime.minute}';
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  child: Text(
+                                    reserveTime,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.all(5)),
+                              CupertinoButton(
+                                  padding: const EdgeInsets.all(0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        fixedSize: const Size(180, 50)),
+                                    onPressed: () => _showDialog(
+                                      CupertinoPicker(
+                                        magnification: 1.22,
+                                        squeeze: 1.2,
+                                        useMagnifier: true,
+                                        itemExtent: _kItemExtent,
+                                        // This is called when selected item is changed.
+                                        onSelectedItemChanged: (int selectedItem) {
+                                          setState(() {
+                                            _selectedOnStation = selectedItem;
+                                            _selectedOnStationName =
+                                            _stationNames[_selectedOnStation];
+                                          });
+                                        },
+                                        children: List<Widget>.generate(
+                                            _stationNames.length, (int index) {
+                                          return Center(
+                                            child: Text(
+                                              _stationNames[index],
                                             ),
-                                          ]),
-                                    ],
-                                  )
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                    child: Text(_selectedOnStationName,
+                                        style: const TextStyle(fontSize: 18)),
+                                  ),
+                                  onPressed: () {}),
+                              const Padding(padding: EdgeInsets.all(5)),
+                              CupertinoButton(
+                                  padding: const EdgeInsets.all(0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        fixedSize: const Size(180, 50)),
+                                    onPressed: () => _showDialog(
+                                      CupertinoPicker(
+                                        magnification: 1.22,
+                                        squeeze: 1.2,
+                                        useMagnifier: true,
+                                        itemExtent: _kItemExtent,
+                                        // This is called when selected item is changed.
+                                        onSelectedItemChanged: (int selectedItem) {
+                                          setState(() {
+                                            _selectedOffStation = selectedItem;
+                                            _selectedOffStationName =
+                                            _stationNames[_selectedOffStation];
+                                          });
+                                        },
+                                        children: List<Widget>.generate(
+                                            _stationNames.length, (int index) {
+                                          return Center(
+                                            child: Text(
+                                              _stationNames[index],
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                    child: Text(_selectedOffStationName,
+                                        style: const TextStyle(fontSize: 18)),
+                                  ),
+                                  onPressed: () {}),
+                            ],
+                          ))),
+                  // 步骤二：现在出发
+                  Visibility(
+                      visible: gonow,
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Padding(padding: EdgeInsets.all(12)),
+                            CupertinoButton(
+                                padding: const EdgeInsets.all(0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      fixedSize: const Size(180, 50)),
+                                  onPressed: () => _showDialog(
+                                    CupertinoPicker(
+                                      magnification: 1.22,
+                                      squeeze: 1.2,
+                                      useMagnifier: true,
+                                      itemExtent: _kItemExtent,
+                                      // This is called when selected item is changed.
+                                      onSelectedItemChanged: (int selectedItem) {
+                                        setState(() {
+                                          _selectedOnStationNow = selectedItem;
+                                          _selectedOnStationNameNow =
+                                          _stationNames[_selectedOnStationNow];
+                                        });
+                                      },
+                                      children: List<Widget>.generate(
+                                          _stationNames.length, (int index) {
+                                        return Center(
+                                          child: Text(
+                                            _stationNames[index],
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                                  child: Text(_selectedOnStationNameNow,
+                                      style: const TextStyle(fontSize: 18)),
+                                ),
+                                onPressed: () {}),
+                            const Padding(padding: EdgeInsets.all(5)),
+                            CupertinoButton(
+                                padding: const EdgeInsets.all(0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      fixedSize: const Size(180, 50)),
+                                  onPressed: () => _showDialog(
+                                    CupertinoPicker(
+                                      magnification: 1.22,
+                                      squeeze: 1.2,
+                                      useMagnifier: true,
+                                      itemExtent: _kItemExtent,
+                                      // This is called when selected item is changed.
+                                      onSelectedItemChanged: (int selectedItem) {
+                                        setState(() {
+                                          _selectedOffStationNow = selectedItem;
+                                          _selectedOffStationNameNow =
+                                          _stationNames[_selectedOffStationNow];
+                                        });
+                                      },
+                                      children: List<Widget>.generate(
+                                          _stationNames.length, (int index) {
+                                        return Center(
+                                          child: Text(
+                                            _stationNames[index],
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                                  child: Text(_selectedOffStationNameNow,
+                                      style: const TextStyle(fontSize: 18)),
+                                ),
+                                onPressed: () {}),
+                          ],
+                        ),
+                      )),
+                  // 步骤三：填写人数
+                  Visibility(
+                      visible: passNum,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("请选择乘客数：$_passNum人", style: TextStyle(fontSize: 16)),
+                          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _passNum = 1;
+                                  });
+                                },
+                                child: Text("1人")),
+                            const Padding(padding: EdgeInsets.all(5)),
+                            ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _passNum = 2;
+                                  });
+                                },
+                                child: Text("2人")),
+                            const Padding(padding: EdgeInsets.all(5)),
+                            ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _passNum = 3;
+                                  });
+                                },
+                                child: Text("3人")),
+                          ]),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _passNum = 4;
+                                    });
+                                  },
+                                  child: Text("4人")),
+                              const Padding(padding: EdgeInsets.all(5)),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _passNum = 5;
+                                    });
+                                  },
+                                  child: Text("5人")),
+                              const Padding(padding: EdgeInsets.all(5)),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _passNum = 6;
+                                    });
+                                  },
+                                  child: Text("6人")),
+                            ],
+                          )
+                        ],
+                      )),
+                  // 步骤四：提交订单
+                  Visibility(
+                      visible: order,
+                      child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            textBaseline: TextBaseline.ideographic,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            children: [
+                              Column(
 
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("订单类型：${isReserve ? "预约出行" : "现在出发"}",
+                                      style: const TextStyle(fontSize: 16)),
+                                  Visibility(
+                                      visible: isReserve,
+                                      child: Text(
+                                          "上车时间：${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}",
+                                          style: const TextStyle(fontSize: 16))),
+                                  Text(
+                                      "上车点：${isReserve ? _selectedOnStationName : _selectedOnStationNameNow}",
+                                      style: const TextStyle(fontSize: 16)),
+                                  Text(
+                                      "目的地：${isReserve ? _selectedOffStationName : _selectedOffStationNameNow}",
+                                      style: const TextStyle(fontSize: 16)),
+                                  Text("乘客数：$_passNum",
+                                      style: const TextStyle(fontSize: 16)),
+                                  const Padding(padding: EdgeInsets.all(10)),
+                                  Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {},
+                                          style: ButtonStyle(
+                                              shape: MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(20)))),
+                                          child: const Text("提交订单"),
+                                        ),
+                                      ]),
                                 ],
-                              ))),
-                      const SizedBox(
-                        height: 16,
-                        // width: 2000,
-                      )
-                    ],
-                  )
-              ),
-              Expanded(flex:1,
-                  child: SizedBox(
-                // height: 340,
-                child: AMapWidget(
-                  // 隐私政策包含高德 必须填写
-                  privacyStatement: ConstConfig.amapPrivacyStatement,
-                  apiKey: ConstConfig.amapApiKeys,
-                  // 初始化地图中心店
-                  initialCameraPosition: currentLocation,
-                  //定位小蓝点
-                  myLocationStyleOptions: MyLocationStyleOptions(
-                    true,
-                  ),
-                  // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
-                  mapType: _mapType,
-                  // 缩放级别范围
-                  minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
-                  // onPoiTouched: _onMapPoiTouched,
-                  markers: Set<Marker>.of(_initMarkerMap.values),
-                  compassEnabled: true,
-                  trafficEnabled: true,
-                  // 地图创建成功时返回AMapController
-                  onMapCreated: (AMapController controller) {
-                    // mapController = controller;
-                    setState(() {
-                      mapController = controller;
-                      getApprovalNumber();
-                    });
-                  },
-                ),
-              ))
+                              )
 
-            ],
+                            ],
+                          ))),
+                  const SizedBox(
+                    height: 16,
+                    // width: 2000,
+                  )
+                ],
+              )
           ),
+        ),
+      )
 
           // 地图以下的文字和按钮组件
 

@@ -38,7 +38,7 @@ cdw
 1. 消除<code>map.dart</code>中不必要的浮动按钮，line795
 2. 添加个人中心页面，修改颜色和部分布局 <code>map.dart</code> line328
 3. 修改提交方式为gitee
-> 由于不会将数据返回到页面中，所以无法获得出生日期等
+> 由于不会将数据返回到页面中，所以无法获得出生日期等（2.7已解决）
 
 zcc
 
@@ -47,4 +47,5 @@ zcc
 cdw
 
 1. 基本完成了个人中心页面的搭建
-2. 了解了点击整个卡片的组件!(Inkwell)[https://www.likecs.com/ask-278534.html]
+2. 了解了点击整个卡片的组件![Inkwell](https://www.likecs.com/ask-278534.html)
+3. 解决了<code>map.dart</code>界面的卡片浮动问题![参考内容1](https://gitee.com/radium/flutter_example/blob/master/lib/pages/getwidget/floating.dart), ![参考内容2](https://www.bilibili.com/video/BV16f4y1o7wu/?spm_id_from=333.337.search-card.all.click&vd_source=ccfdf3ee034d0587aaba009418f2cbed)
