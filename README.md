@@ -47,5 +47,5 @@ zcc
 cdw
 
 1. 基本完成了个人中心页面的搭建
-2. 了解了点击整个卡片的组件![Inkwell](https://www.likecs.com/ask-278534.html)
-3. 解决了<code>map.dart</code>界面的卡片浮动问题![参考内容1](https://gitee.com/radium/flutter_example/blob/master/lib/pages/getwidget/floating.dart), ![参考内容2](https://www.bilibili.com/video/BV16f4y1o7wu/?spm_id_from=333.337.search-card.all.click&vd_source=ccfdf3ee034d0587aaba009418f2cbed)
+2. 了解了点击整个卡片的组件[Inkwell](https://www.likecs.com/ask-278534.html)
+3. 解决了<code>map.dart</code>界面的卡片浮动问题[参考内容1](https://gitee.com/radium/flutter_example/blob/master/lib/pages/getwidget/floating.dart), [参考内容2](https://www.bilibili.com/video/BV16f4y1o7wu/?spm_id_from=333.337.search-card.all.click&vd_source=ccfdf3ee034d0587aaba009418f2cbed)

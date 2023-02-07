@@ -203,7 +203,7 @@ class _CenterPageState extends State<CenterPage> {
                   margin: const EdgeInsets.all(10),
                   color: const Color.fromARGB(250, 250, 252, 254),
                   elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  shadowColor: const Color.fromARGB(6, 231, 241, 251),
                   child: Container(
                       margin: const EdgeInsets.all(10),
                       child: TextButton.icon(

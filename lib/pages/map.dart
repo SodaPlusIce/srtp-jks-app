@@ -110,7 +110,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _mapType = MapType.normal;
+    _mapType = MapType.navi;
 
     /// 设置Android和iOS的apikey，
     AMapFlutterLocation.setApiKey(ConstConfig.androidKey, ConstConfig.iosKey);
@@ -356,14 +356,15 @@ class _MapPageState extends State<MapPage> {
         // showBlurness: true,
         //背景模糊的颜色
         blurnessColor: Colors.blue,
-        child: Center(
+        child: Opacity(
+          opacity: 0.818,
           child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               margin:const EdgeInsets.fromLTRB(10, 10, 0, 0),
-              color: Colors.greenAccent,
-              shadowColor: Colors.white54,
+              color: const Color.fromARGB(250, 250, 252, 254),
+              shadowColor: const Color.fromARGB(250, 231, 241, 251),
               elevation:20 ,
               child: Column(
                 children: [
