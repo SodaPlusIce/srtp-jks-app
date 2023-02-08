@@ -120,7 +120,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
       // backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("个人中心"),
+        title: const Text("个人中心",style: TextStyle(
+          fontWeight: FontWeight.w900,fontSize: 20,
+        ),),
       ),
       body: ListView(
         children: <Widget>[

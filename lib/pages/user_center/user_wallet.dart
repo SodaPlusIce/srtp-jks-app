@@ -10,7 +10,7 @@ class _UserWallPageState extends State<UserWallPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Wallet",style: TextStyle(
+      appBar: AppBar(title: const Text("钱包余额",style: TextStyle(
         fontWeight: FontWeight.w900,fontSize: 20,
       ),),),
       backgroundColor:  const Color.fromARGB(250, 239, 249, 255),
@@ -40,8 +40,8 @@ class _UserWallPageState extends State<UserWallPage> {
                 ),
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 color: const Color.fromARGB(250, 250, 252, 254),
-                elevation: 10,
-                shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                // elevation: 10,
+                // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                 child: Container(
                   height: 200,
                   width: 500,
@@ -182,8 +182,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                     margin: const EdgeInsets.all(10),
                     child:  Column(
@@ -218,8 +218,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                     height: 70,
                     margin: const EdgeInsets.all(10),
@@ -248,8 +248,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                     height: 70,
                     margin: const EdgeInsets.all(10),
@@ -276,8 +276,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                     margin: const EdgeInsets.all(10),
                     child:  Column(
@@ -312,8 +312,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                       height: 70,
                       margin: const EdgeInsets.all(10),
@@ -342,8 +342,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                       height: 70,
                       margin: const EdgeInsets.all(10),
@@ -370,8 +370,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                     margin: const EdgeInsets.all(10),
                     child:  Column(
@@ -406,8 +406,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                       height: 70,
                       margin: const EdgeInsets.all(10),
@@ -436,8 +436,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                       height: 70,
                       margin: const EdgeInsets.all(10),
@@ -464,8 +464,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                     margin: const EdgeInsets.all(10),
                     child:  Column(
@@ -500,8 +500,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                       height: 70,
                       margin: const EdgeInsets.all(10),
@@ -530,8 +530,8 @@ class _UserWallPageState extends State<UserWallPage> {
                   ),
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   color: const Color.fromARGB(250, 250, 252, 254),
-                  elevation: 10,
-                  shadowColor: const Color.fromARGB(250, 231, 241, 251),
+                  // elevation: 10,
+                  // shadowColor: const Color.fromARGB(250, 231, 241, 251),
                   child: Container(
                       height: 70,
                       margin: const EdgeInsets.all(10),
