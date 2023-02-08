@@ -13,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+
 const double _kItemExtent = 32.0;
 const List<String> _stationNames = <String>[
   "换乘中心", //0
@@ -71,7 +72,7 @@ class _MapPageState extends State<MapPage> {
   double? meLongitude;
 
   /// AppBar的title
-  var title = "智慧公交——定位";
+  var title = "智慧公交——预约响应";
   bool backIcon = false; //待删除相关逻辑
 
   /// 控制地图下方控件的显示
@@ -304,21 +305,20 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        // automaticallyImplyLeading: false,
-        // leading: backIcon
-        //     ? IconButton(
-        //         onPressed: () {
-        //           basic = true;
-        //           reserve = false;
-        //           gonow = false;
-        //           backIcon = false;
-        //           title = "智能公交——预约响应";
-        //         },
-        //         icon: const Icon(Icons.arrow_back_outlined))
-        //     : null,
-        title: const Text("智慧公交--预约"),
-      ),
-      body:  GFFloatingWidget(
+          // automaticallyImplyLeading: false,
+          // leading: backIcon
+          //     ? IconButton(
+          //         onPressed: () {
+          //           basic = true;
+          //           reserve = false;
+          //           gonow = false;
+          //           backIcon = false;
+          //           title = "智能公交——预约响应";
+          //         },
+          //         icon: const Icon(Icons.arrow_back_outlined))
+          //     : null,
+          title: Text(title)),
+      body: GFFloatingWidget(
         //垂直偏移量
         // verticalPosition: MediaQuery.of(context).size.height * 0.01,
         // // 水平偏移量
@@ -356,18 +356,18 @@ class _MapPageState extends State<MapPage> {
         // showBlurness: true,
         //背景模糊的颜色
         blurnessColor: Colors.blue,
-        child:SizedBox(
-          width: MediaQuery.of(context).size.width ,
-          child:  Opacity(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Opacity(
             opacity: 0.818,
             child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                margin:const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                 color: const Color.fromARGB(250, 250, 252, 254),
                 shadowColor: const Color.fromARGB(250, 231, 241, 251),
-                elevation:20 ,
+                elevation: 20,
                 child: Column(
                   children: [
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -383,7 +383,7 @@ class _MapPageState extends State<MapPage> {
                                 _stepIndex--;
                                 if (_stepIndex == 0) {
                                   basic = true;
-                                  title = "智能公交——预约";
+                                  title = "智慧公交——预约响应";
                                   reserve = false;
                                   gonow = false;
                                   order = false;
@@ -449,7 +449,8 @@ class _MapPageState extends State<MapPage> {
                               Container(
                                   padding: const EdgeInsets.only(bottom: 8),
                                   child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Text(
                                           '选择出行方式',
@@ -458,10 +459,12 @@ class _MapPageState extends State<MapPage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const Padding(padding: EdgeInsets.all(2)),
+                                        const Padding(
+                                            padding: EdgeInsets.all(2)),
                                         IconButton(
                                             padding: const EdgeInsets.all(0),
-                                            icon: const Icon(Icons.info_outlined),
+                                            icon:
+                                                const Icon(Icons.info_outlined),
                                             onPressed: () {
                                               showDeleteConfirmDialog();
                                             })
@@ -498,7 +501,8 @@ class _MapPageState extends State<MapPage> {
                                     isReserve = false;
                                   });
                                 },
-                                child: const Text('现在出发', style: TextStyle(fontSize: 18)),
+                                child: const Text('现在出发',
+                                    style: TextStyle(fontSize: 18)),
                               ),
                             ],
                           ),
@@ -532,11 +536,12 @@ class _MapPageState extends State<MapPage> {
                                         mode: CupertinoDatePickerMode.time,
                                         use24hFormat: true,
                                         // This is called when the user changes the dateTime.
-                                        onDateTimeChanged: (DateTime newDateTime) {
+                                        onDateTimeChanged:
+                                            (DateTime newDateTime) {
                                           setState(() {
                                             dateTime = newDateTime;
                                             reserveTime =
-                                            '${dateTime.year}-${dateTime.month}-${dateTime.day}'
+                                                '${dateTime.year}-${dateTime.month}-${dateTime.day}'
                                                 ' ${dateTime.hour}:${dateTime.minute}';
                                           });
                                         },
@@ -561,15 +566,18 @@ class _MapPageState extends State<MapPage> {
                                           useMagnifier: true,
                                           itemExtent: _kItemExtent,
                                           // This is called when selected item is changed.
-                                          onSelectedItemChanged: (int selectedItem) {
+                                          onSelectedItemChanged:
+                                              (int selectedItem) {
                                             setState(() {
                                               _selectedOnStation = selectedItem;
                                               _selectedOnStationName =
-                                              _stationNames[_selectedOnStation];
+                                                  _stationNames[
+                                                      _selectedOnStation];
                                             });
                                           },
                                           children: List<Widget>.generate(
-                                              _stationNames.length, (int index) {
+                                              _stationNames.length,
+                                              (int index) {
                                             return Center(
                                               child: Text(
                                                 _stationNames[index],
@@ -595,15 +603,19 @@ class _MapPageState extends State<MapPage> {
                                           useMagnifier: true,
                                           itemExtent: _kItemExtent,
                                           // This is called when selected item is changed.
-                                          onSelectedItemChanged: (int selectedItem) {
+                                          onSelectedItemChanged:
+                                              (int selectedItem) {
                                             setState(() {
-                                              _selectedOffStation = selectedItem;
+                                              _selectedOffStation =
+                                                  selectedItem;
                                               _selectedOffStationName =
-                                              _stationNames[_selectedOffStation];
+                                                  _stationNames[
+                                                      _selectedOffStation];
                                             });
                                           },
                                           children: List<Widget>.generate(
-                                              _stationNames.length, (int index) {
+                                              _stationNames.length,
+                                              (int index) {
                                             return Center(
                                               child: Text(
                                                 _stationNames[index],
@@ -640,11 +652,14 @@ class _MapPageState extends State<MapPage> {
                                         useMagnifier: true,
                                         itemExtent: _kItemExtent,
                                         // This is called when selected item is changed.
-                                        onSelectedItemChanged: (int selectedItem) {
+                                        onSelectedItemChanged:
+                                            (int selectedItem) {
                                           setState(() {
-                                            _selectedOnStationNow = selectedItem;
+                                            _selectedOnStationNow =
+                                                selectedItem;
                                             _selectedOnStationNameNow =
-                                            _stationNames[_selectedOnStationNow];
+                                                _stationNames[
+                                                    _selectedOnStationNow];
                                           });
                                         },
                                         children: List<Widget>.generate(
@@ -674,11 +689,14 @@ class _MapPageState extends State<MapPage> {
                                         useMagnifier: true,
                                         itemExtent: _kItemExtent,
                                         // This is called when selected item is changed.
-                                        onSelectedItemChanged: (int selectedItem) {
+                                        onSelectedItemChanged:
+                                            (int selectedItem) {
                                           setState(() {
-                                            _selectedOffStationNow = selectedItem;
+                                            _selectedOffStationNow =
+                                                selectedItem;
                                             _selectedOffStationNameNow =
-                                            _stationNames[_selectedOffStationNow];
+                                                _stationNames[
+                                                    _selectedOffStationNow];
                                           });
                                         },
                                         children: List<Widget>.generate(
@@ -704,32 +722,35 @@ class _MapPageState extends State<MapPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("请选择乘客数：$_passNum人", style: TextStyle(fontSize: 16)),
-                            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _passNum = 1;
-                                    });
-                                  },
-                                  child: Text("1人")),
-                              const Padding(padding: EdgeInsets.all(5)),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _passNum = 2;
-                                    });
-                                  },
-                                  child: Text("2人")),
-                              const Padding(padding: EdgeInsets.all(5)),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _passNum = 3;
-                                    });
-                                  },
-                                  child: Text("3人")),
-                            ]),
+                            Text("请选择乘客数：$_passNum人",
+                                style: TextStyle(fontSize: 16)),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _passNum = 1;
+                                        });
+                                      },
+                                      child: Text("1人")),
+                                  const Padding(padding: EdgeInsets.all(5)),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _passNum = 2;
+                                        });
+                                      },
+                                      child: Text("2人")),
+                                  const Padding(padding: EdgeInsets.all(5)),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _passNum = 3;
+                                        });
+                                      },
+                                      child: Text("3人")),
+                                ]),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -771,7 +792,6 @@ class _MapPageState extends State<MapPage> {
                               crossAxisAlignment: CrossAxisAlignment.baseline,
                               children: [
                                 Column(
-
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text("订单类型：${isReserve ? "预约出行" : "现在出发"}",
@@ -780,7 +800,8 @@ class _MapPageState extends State<MapPage> {
                                         visible: isReserve,
                                         child: Text(
                                             "上车时间：${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}",
-                                            style: const TextStyle(fontSize: 16))),
+                                            style:
+                                                const TextStyle(fontSize: 16))),
                                     Text(
                                         "上车点：${isReserve ? _selectedOnStationName : _selectedOnStationNameNow}",
                                         style: const TextStyle(fontSize: 16)),
@@ -791,21 +812,24 @@ class _MapPageState extends State<MapPage> {
                                         style: const TextStyle(fontSize: 16)),
                                     const Padding(padding: EdgeInsets.all(10)),
                                     Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           ElevatedButton(
                                             onPressed: () {},
                                             style: ButtonStyle(
-                                                shape: MaterialStateProperty.all(
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(20)))),
+                                                shape:
+                                                    MaterialStateProperty.all(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20)))),
                                             child: const Text("提交订单"),
                                           ),
                                         ]),
                                   ],
                                 )
-
                               ],
                             ))),
                     const SizedBox(
@@ -813,14 +837,12 @@ class _MapPageState extends State<MapPage> {
                       // width: 2000,
                     )
                   ],
-                )
-            ),
+                )),
           ),
         ),
       ),
 
       // 地图以下的文字和按钮组件
-
 
       // const Padding(padding: EdgeInsets.all(10)),
 
