@@ -57,7 +57,7 @@ class _LocationPageState extends State<LocationPage> {
     _locationListener = _locationPlugin
         .onLocationChanged()
         .listen((Map<String, Object> result) {
-      print(result);
+      // print(result);
 
       setState(() {
         _latitude = result["latitude"].toString();

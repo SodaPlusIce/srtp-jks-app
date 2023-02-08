@@ -13,6 +13,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:http/http.dart' as http;
+
+const String netip = "http://10.0.2.2:5000";
 
 const double _kItemExtent = 32.0;
 const List<String> _stationNames = <String>[
@@ -99,9 +102,7 @@ class _MapPageState extends State<MapPage> {
   String _selectedOnStationNameNow = "选择 上车点";
   String _selectedOffStationNameNow = "选择 目的地";
 
-  /// step中的left和right的IconButton的显示与否
-  // bool _stepLeftButton = false;
-  // bool _stepRightButton = true;
+  /// 步骤x相关数据
   int _stepIndex = 0;
   final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四"];
 
@@ -278,7 +279,7 @@ class _MapPageState extends State<MapPage> {
             ));
   }
 
-  // 弹出"选择出行方式"旁的info按钮对应的对话框
+  /// 弹出"选择出行方式"旁的info按钮对应的对话框
   Future<bool?> showDeleteConfirmDialog() {
     return showDialog<bool>(
       context: context,
@@ -297,6 +298,29 @@ class _MapPageState extends State<MapPage> {
         );
       },
     );
+  }
+
+  /// 调用接口： getOrderInfo
+  Future<void> getOrderInfo() async {
+    String url = "$netip/getOrderInfo";
+    var res = await http.get(Uri.parse(url));
+    if (res.statusCode == 200) {
+      print(res.body);
+    } else {
+      print("Failed to get data.~~~");
+      // 做出提示，网络连接有问题
+    }
+  }
+
+  /// 调用接口： addOrder
+  Future<void> addOrder() async {
+    String url = "$netip/addOrder";
+    var res = await http.post(Uri.parse(url), body: {});
+    if (res.statusCode == 200) {
+      print(res.body);
+    } else {
+      print("Failed to get data.~~~");
+    }
   }
 
   @override
@@ -816,7 +840,9 @@ class _MapPageState extends State<MapPage> {
                                             MainAxisAlignment.spaceAround,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              getOrderInfo(); // 测试接口
+                                            },
                                             style: ButtonStyle(
                                                 shape:
                                                     MaterialStateProperty.all(
@@ -954,30 +980,6 @@ class _MapPageState extends State<MapPage> {
   //                         var locationData = value['location'].split(',');
   //                         double l1 = double.parse(locationData[1]);
   //                         double l2 = double.parse(locationData[0]);
-
-  //                         Uri uri = Uri.parse(
-  //                             '${Platform.isAndroid ? 'android' : 'ios'}amap://path?sourceApplication=applicationName&sid=&slat=$meLatitude&slon=$meLongitude&sname=&did=&dlat=$l1&dlon=$l2&dname=$title&dev=0&t=0');
-
-  //                         try {
-  //                           if (await canLaunchUrl(uri)) {
-  //                             await launchUrl(uri);
-  //                           } else {
-  //                             print('无法调起高德地图');
-  //                           }
-  //                         } catch (e) {
-  //                           print('无法调起高德地图');
-  //                         }
-  //                         Navigator.pop(context);
-  //                       },
-  //                     ),
-  //                   ],
-  //                 );
-  //               });
-  //         },
-  //       );
-  //     }).toList(),
-  //   );
-  // }
 
   /// 获取周边数据
   // Future<void> _getPoisData() async {
