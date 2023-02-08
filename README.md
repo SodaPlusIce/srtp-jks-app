@@ -49,3 +49,18 @@ cdw
 1. 基本完成了个人中心页面的搭建
 2. 了解了点击整个卡片的组件[Inkwell](https://www.likecs.com/ask-278534.html)
 3. 解决了<code>map.dart</code>界面的卡片浮动问题[参考内容1](https://gitee.com/radium/flutter_example/blob/master/lib/pages/getwidget/floating.dart), [参考内容2](https://www.bilibili.com/video/BV16f4y1o7wu/?spm_id_from=333.337.search-card.all.click&vd_source=ccfdf3ee034d0587aaba009418f2cbed)
+
+## 2023.2.8
+
+zcc
+
+研究如何连接到后台，测试提交订单功能。
+
+问题：模拟器中无法直接访问本地环境，目前思路是买一个服务器，反正后续也要用，把后端部署上去
+
+或者是搜如何在真机或模拟器中访问本地接口[已解决]
+
+接口连接测试ing
+
+后续工作：后端理一下业务思路，改善目前已有接口，并适当新开接口
+
