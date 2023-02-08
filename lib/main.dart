@@ -31,9 +31,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    CenterPage(),
+    MapPage(),
     LocationPage(),
-    MapPage()
+    CenterPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -55,20 +55,21 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.navigation),
+            label: '首页',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.room),
-            label: 'Location',
+            label: '定位',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.route),
-            label: 'Route',
+            icon: Icon(Icons.person),
+            label: '个人中心',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ),
     );
