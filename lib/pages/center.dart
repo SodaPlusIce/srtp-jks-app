@@ -26,7 +26,7 @@ class _CenterPageState extends State<CenterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(250, 242, 243, 247),
       // backgroundColor: const Color.fromARGB(250, 239, 249, 255),
       appBar: AppBar(
         // centerTitle: true,
@@ -119,7 +119,9 @@ class _CenterPageState extends State<CenterPage> {
                 ),
                 margin: const EdgeInsets.all(10),
                 color: const Color.fromARGB(250, 250, 252, 254),
+                // color: const Color.fromARGB(250, 242, 243, 247),
                 elevation: 10,
+                // shadowColor: const Color.fromARGB(a, r, g, b),
                 shadowColor: const Color.fromARGB(250, 231, 241, 251),
                 child: Container(
                     height: 60,

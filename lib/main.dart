@@ -31,8 +31,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    MapPage(),
     LocationPage(),
+    MapPage(),
     CenterPage(),
   ];
 
@@ -55,23 +55,49 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.navigation),
-            label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.room),
+            icon: Icon(Icons.room,size: 40,),
             label: '定位',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(null),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person,size: 40,),
+
             label: '个人中心',
           ),
         ],
+
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.grey,
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ),
+      floatingActionButton: Container(
+        height: 90,
+        width: 90,
+        padding: const EdgeInsets.all(5),
+        margin:const EdgeInsets.only(top: 40),
+        decoration:   BoxDecoration(
+            color: const Color.fromARGB(255, 250, 250, 250),
+            borderRadius: BorderRadius.circular(40)
+
+        ),
+        child: FloatingActionButton(
+          backgroundColor: _selectedIndex == 1?Colors.blue:Colors.grey,
+          foregroundColor: Colors.white,
+          child: const Icon(Icons.navigation,
+            size: 40,
+          ),
+          onPressed: (){
+            setState((){
+              _selectedIndex = 1;
+            });
+          },
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

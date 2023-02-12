@@ -49,7 +49,8 @@ dependencies:
   flutter_cupertino_datetime_picker: ^3.0.0
   #UI库
   getwidget: ^3.0.1
-
+#  拟态风格获取
+  flutter_neumorphic: ^3.0.3
   #GETX
   get: ^4.6.5
   http: ^0.13.5

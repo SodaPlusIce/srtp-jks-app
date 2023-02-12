@@ -139,7 +139,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               children: [
                 // 这段做个人信息内容
                 ListTile(
-                  title: Text("头像"),
+                  title: const Text("头像"),
                   trailing: ClipOval(
                     child: Image.asset(
                       'assets/images/lake.jpg',
