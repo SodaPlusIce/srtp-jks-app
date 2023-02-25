@@ -3,9 +3,12 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+
+import '../user_center/user_history.dart';
 
 class LoginDemoPage extends StatefulWidget {
-  LoginDemoPage({required Key key});
+  LoginDemoPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -40,7 +43,7 @@ class _LoginPageState extends State<LoginDemoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('登录示例demo'),
+        title: Text('登录界面'),
       ),
       body: buildBody(),
     );
@@ -65,7 +68,7 @@ class _LoginPageState extends State<LoginDemoPage> {
       padding: EdgeInsets.only(right: 20, top: 20),
       child: ListView(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(left: 20),
             child: Text(
               '快捷登录注册',
@@ -73,100 +76,90 @@ class _LoginPageState extends State<LoginDemoPage> {
             ),
           ),
           SizedBox(height: 30),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
+          Neumorphic(
+          margin: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 4),
+          style: NeumorphicStyle(
+          depth: NeumorphicTheme.embossDepth(context),
+          boxShape: const NeumorphicBoxShape.stadium(),
+          color: Colors.grey[200]),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+          child: Form(
+            // key: phoneFormKey,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 28, minHeight: 28
+//                      maxWidth: 150,
+              ),
+              child: TextFormField(
+                textAlignVertical: TextAlignVertical.center,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                minLines: 1,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 4,vertical: 3),
+                  // fillColor: Colors.green,
+                  border: InputBorder.none,
+                  // 提示框左边的控件
+                  prefixIcon: Container(
+                    width: 65,
+                    alignment: Alignment.centerLeft,
+                    child: const Text(
+                      '+86',
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  hintText: "请输入手机号",
+                  //解决登录界面中无法显示出居中文字效果方案
+                  isCollapsed: true,
+                ),
+
+                onSaved: (mobile) {
+                  /*if (mobile == null || mobile.isEmpty == true) {
+                    return;
+                  }*/
+                  // formValue['mobile'] = mobile;
+                },
+              ),
+            ),
+          ),
+    ),
+         // ////////////////////////////////////////////////////
+          const SizedBox(height: 20),
+          Neumorphic(
+            margin: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 4),
+            style: NeumorphicStyle(
+                depth: NeumorphicTheme.embossDepth(context),
+                boxShape: const NeumorphicBoxShape.stadium(),
+                color: Colors.grey[200]),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
             child: Form(
-              key: phoneFormKey,
+              // key: codeFormKey,
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 58, minHeight: 58
+                constraints:const BoxConstraints(maxHeight: 48, minHeight: 48
 //                      maxWidth: 150,
                 ),
                 child: TextFormField(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // 这个地方和下面的数据使用情况相交的时候是有效的
+                  textAlignVertical: TextAlignVertical.center,
+                  style:const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  minLines: 1,
+                  maxLines: 4,
                   decoration: InputDecoration(
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-                    fillColor: Colors.white,
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: LabelBlackColor, width: 1),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFF5F5F5),
-                        width: 1.0,
-                      ),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFF5F5F5),
-                        width: 1.0,
-                      ),
-                    ),
+                    const EdgeInsets.symmetric(horizontal: 4,vertical: 3),
+                    border: InputBorder.none,
                     prefixIcon: Container(
                       width: 65,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '+86',
+                      alignment: Alignment.center,
+                      child: const Text(
+                        '验证码',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    hintText: '请输入手机账号',
-                    hintStyle:
-                    TextStyle(fontSize: 16, color: Color(0xFF999999)),
-                  ),
-                  onSaved: (mobile) {
-                    if (mobile == null || mobile.isEmpty == true) {
-                      return;
-                    }
-                    formValue['mobile'] = mobile;
-                  },
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: Form(
-              key: codeFormKey,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 58, minHeight: 58
-//                      maxWidth: 150,
-                ),
-                child: TextFormField(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    contentPadding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-                    fillColor: Colors.white,
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: LabelBlackColor, width: 1),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFF5F5F5),
-                        width: 1.0,
-                      ),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFF5F5F5),
-                        width: 1.0,
-                      ),
-                    ),
-                    prefixIcon: Container(
-                      width: 65,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '验证码',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    hintText: '请输入图形验证码',
-                    hintStyle:
-                    TextStyle(fontSize: 16, color: Color(0xFF999999)),
+                    hintText: '输入图形验证码',
+
                     suffixIcon: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -179,9 +172,10 @@ class _LoginPageState extends State<LoginDemoPage> {
                           }
                         }
                       },
-                      child: Container(
+                      child: SizedBox(
+
                         width: 100,
-                        height: 30,
+                        // height: 30,
                         child: Image.memory(
                           base64Decode(_imageUrl
                               .split(',')[1]
@@ -191,6 +185,8 @@ class _LoginPageState extends State<LoginDemoPage> {
                         ),
                       ),
                     ),
+                    isCollapsed: true,
+
                   ),
                   onSaved: (text) {
                     if (text == null || text.isEmpty == true) {
@@ -202,48 +198,42 @@ class _LoginPageState extends State<LoginDemoPage> {
               ),
             ),
           ),
-          SizedBox(height: 20),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
+
+
+          const SizedBox(height: 20),
+          Neumorphic(
+            margin: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 4),
+            style: NeumorphicStyle(
+                depth: NeumorphicTheme.embossDepth(context),
+                boxShape: const NeumorphicBoxShape.stadium(),
+                color: Colors.grey[200]),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
             child: Form(
-              key: imageFormKey,
+              // key: codeFormKey,
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 58, minHeight: 58
+                constraints:const BoxConstraints(maxHeight: 48, minHeight: 48
 //                      maxWidth: 150,
                 ),
                 child: TextFormField(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // 这个地方和下面的数据使用情况相交的时候是有效的
+                  textAlignVertical: TextAlignVertical.center,
+                  style:const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  minLines: 1,
+                  maxLines: 4,
                   decoration: InputDecoration(
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-                    fillColor: Colors.white,
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: LabelBlackColor, width: 1),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFF5F5F5),
-                        width: 1.0,
-                      ),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFF5F5F5),
-                        width: 1.0,
-                      ),
-                    ),
+                    const EdgeInsets.symmetric(horizontal: 4,vertical: 3),
+                    border: InputBorder.none,
                     prefixIcon: Container(
                       width: 65,
                       alignment: Alignment.centerLeft,
-                      child: Text(
+                      child: const Text(
                         '验证码',
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
                     hintText: '请输入短信验证码',
-                    hintStyle:
-                    TextStyle(fontSize: 16, color: Color(0xFF999999)),
                     suffixIcon: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -257,40 +247,49 @@ class _LoginPageState extends State<LoginDemoPage> {
                         widthFactor: 1,
                         child: Text(
                           _seconds == 0 ? '获取验证码' : '$_seconds秒',
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ),
                     ),
+                    isCollapsed: true,
+
                   ),
                   onSaved: (text) {
                     if (text == null || text.isEmpty == true) {
                       return;
                     }
-                    formValue['code'] = text;
+                    formValue['imageCode'] = text;
                   },
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: GestureDetector(
-              onTap: () {
-                phoneFormKey.currentState?.save();
-                imageFormKey.currentState?.save();
-              },
-              behavior: HitTestBehavior.opaque,
+
+          const SizedBox(height: 50),
+          Center(
+            child:NeumorphicButton(
+              style: NeumorphicStyle(
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(28),
+                ),
+                // color: Colors.grey[200],
+                color: const Color.fromARGB(250, 250, 252, 254),
+                shape: NeumorphicShape.flat,
+              ),
               child: Container(
-                height: 48,
-                color: LabelBlackColor,
-                alignment: Alignment.center,
-                child: Text(
-                  '登录/注册',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                color: const Color.fromARGB(250, 250, 252, 254),
+                width: MediaQuery.of(context).size.width*0.8,
+                height: 60,
+                child: const Center(
+                  child: Text('登录/注册',style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),),
                 ),
               ),
-            ),
+              onPressed: () {},
+            ) ,
           ),
         ],
       ),
