@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jtjs/pages/login.dart';
+import 'package:jtjs/pages/temp.dart';
 import './pages/location.dart';
 import './pages/map.dart';
 import './pages/center.dart';
@@ -30,10 +32,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
+  static  List<Widget> _widgetOptions = <Widget>[
     LocationPage(),
     MapPage(),
-    CenterPage(),
+    TempPageForTest(),
+
+     // LoginDemoPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -55,7 +59,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.room,size: 40,),
+            icon: Icon(Icons.room,size: 20,),
             label: '定位',
           ),
           BottomNavigationBarItem(
@@ -63,8 +67,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,size: 40,),
-
+            icon: Icon(Icons.person,size: 20,),
             label: '个人中心',
           ),
         ],
@@ -75,8 +78,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         onTap: _onItemTapped,
       ),
       floatingActionButton: Container(
-        height: 90,
-        width: 90,
+        height: 70,
+        width: 70,
         padding: const EdgeInsets.all(5),
         margin:const EdgeInsets.only(top: 40),
         decoration:   BoxDecoration(
@@ -88,7 +91,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           backgroundColor: _selectedIndex == 1?Colors.blue:Colors.grey,
           foregroundColor: Colors.white,
           child: const Icon(Icons.navigation,
-            size: 40,
+            size: 30,
           ),
           onPressed: (){
             setState((){

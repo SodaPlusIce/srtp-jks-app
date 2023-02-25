@@ -205,7 +205,9 @@ class _LocationPageState extends State<LocationPage> {
     return Scaffold(
       appBar: AppBar(
         // leading: Icon(Icons.arrow_back_outlined),
-        title: const Text('智慧公交——预约响应'),
+        backgroundColor: const Color.fromARGB(250, 87, 150, 92),
+
+        title: const Text('智慧公交——定位测试'),
       ),
       body: Center(
         child: Column(

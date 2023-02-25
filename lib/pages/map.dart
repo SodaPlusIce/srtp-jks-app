@@ -341,7 +341,8 @@ class _MapPageState extends State<MapPage> {
           //         },
           //         icon: const Icon(Icons.arrow_back_outlined))
           //     : null,
-          title: Text(title)),
+          backgroundColor: const Color.fromARGB(250, 87, 150, 92),
+          title: const Text("智慧公交--预约响应")),
       body: GFFloatingWidget(
         //垂直偏移量
         // verticalPosition: MediaQuery.of(context).size.height * 0.01,
@@ -407,7 +408,7 @@ class _MapPageState extends State<MapPage> {
                                 _stepIndex--;
                                 if (_stepIndex == 0) {
                                   basic = true;
-                                  title = "智慧公交——预约响应";
+                                  // title = "智慧公交——预约响应";
                                   reserve = false;
                                   gonow = false;
                                   order = false;

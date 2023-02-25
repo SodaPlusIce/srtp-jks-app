@@ -30,17 +30,18 @@ class _CenterPageState extends State<CenterPage> {
       // backgroundColor: const Color.fromARGB(250, 239, 249, 255),
       appBar: AppBar(
         // centerTitle: true,
-        // backgroundColor: const Color.fromARGB(250, 0, 135, 15),
+        backgroundColor: const Color.fromARGB(255, 166, 211, 242),
         // backgroundColor: Colors.lightBlueAccent,
         // shadowColor: Colors.white,
         // elevation: 0,
         // leading: Icon(Icons.arrow_back_outlined),
         title: const Text('智慧公交——主页',
-          /*style: TextStyle(
-*//*          fontSize: 22,
+          style: TextStyle(
+          fontSize: 22,
           fontWeight: FontWeight.w900,
-          color: Colors.black*//*
-        ),*/
+          color: Colors.black,
+            // fontFamily: "宋体"
+        ),
         ),
       ),
       body: Center(
@@ -49,15 +50,16 @@ class _CenterPageState extends State<CenterPage> {
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Card(
+
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
             margin: const EdgeInsets.all(10),
-            color: const Color.fromARGB(250, 230, 241, 232),
+            color: const Color.fromARGB(232,175, 195, 168),
             // elevation: 10,
             // shadowColor: Colors.grey,
             child: Container(
-              height: 100,
+              height: 120,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
