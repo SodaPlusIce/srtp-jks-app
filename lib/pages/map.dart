@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:jtjs/config/appbar_settings.dart';
 import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -328,21 +329,7 @@ class _MapPageState extends State<MapPage> {
     _addMarker(); //添加各站点的marker
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-          // automaticallyImplyLeading: false,
-          // leading: backIcon
-          //     ? IconButton(
-          //         onPressed: () {
-          //           basic = true;
-          //           reserve = false;
-          //           gonow = false;
-          //           backIcon = false;
-          //           title = "智能公交——预约响应";
-          //         },
-          //         icon: const Icon(Icons.arrow_back_outlined))
-          //     : null,
-          backgroundColor: const Color.fromARGB(250, 87, 150, 92),
-          title: const Text("智慧公交--预约响应")),
+      appBar:UnionAppBar(title: "预约响应",colors: const Color.fromARGB(255, 247, 251, 255)),
       body: GFFloatingWidget(
         //垂直偏移量
         // verticalPosition: MediaQuery.of(context).size.height * 0.01,
@@ -480,8 +467,8 @@ class _MapPageState extends State<MapPage> {
                                         const Text(
                                           '选择出行方式',
                                           style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            fontFamily: "oppoSansBold",
                                           ),
                                         ),
                                         const Padding(

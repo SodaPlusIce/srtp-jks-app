@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jtjs/config/appbar_settings.dart';
 class UserCollPage extends StatefulWidget {
   const UserCollPage({Key? key}) : super(key: key);
 
@@ -10,7 +11,7 @@ class _UserCollPageState extends State<UserCollPage> {
   Column _showCollectionMessages(start,stop){
     return Column(
       children: [
-        const SizedBox(height: 10,),
+        /*const SizedBox(height: 10,),
         Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -41,6 +42,28 @@ class _UserCollPageState extends State<UserCollPage> {
               ),),
             ),
           ),
+        ),*/
+        ListTile(
+          leading: const Icon(Icons.currency_exchange,color: Color.fromARGB(250, 42, 173, 103), size: 40,),
+          title:  Text("出发点:$start",style: const TextStyle(
+            fontSize: 18,
+            fontFamily: "oppoSansRegular",
+            // fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),),
+          subtitle:  Text("终点站:$stop",style:const TextStyle(
+            fontSize: 18,
+            fontFamily: "oppoSansRegular",
+            // fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),),
+
+          trailing: const Text("预计消费50元",style: TextStyle(
+            fontSize: 23,
+            fontFamily: "oppoSansMedium",
+            // fontWeight: FontWeight.w900,
+            color: Colors.black,
+          ),),
         ),
       ],
     );
@@ -49,12 +72,10 @@ class _UserCollPageState extends State<UserCollPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("我的收藏",style: TextStyle(
-      fontWeight: FontWeight.w900,fontSize: 20,
-      ),),),
-      backgroundColor:  const Color.fromARGB(250, 239, 249, 255),
+      appBar: UnionAppBar(title: "收藏",),
+      backgroundColor:  const Color.fromARGB(250, 245, 245, 245),
       body: ListView.builder(
-        itemCount: 20,
+        itemCount: 5,
           itemBuilder: (context,index){
           return _showCollectionMessages("广州", "上海");
       })

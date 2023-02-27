@@ -1,106 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:jtjs/config/color.dart';
+import 'package:jtjs/driver_pages/my_home_page.dart';
 import 'package:jtjs/pages/login.dart';
+import 'package:jtjs/pages/my_home_page.dart';
 import 'package:jtjs/pages/temp.dart';
 import './pages/location.dart';
 import './pages/map.dart';
-import './pages/center.dart';
+import './pages/user_center.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   static const String _title = '智慧公交——定位';
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: _title,
-      home: MyStatefulWidget(),
-    );
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static  List<Widget> _widgetOptions = <Widget>[
-    LocationPage(),
-    MapPage(),
-    TempPageForTest(),
-
-     // LoginDemoPage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   // leading: Icon(Icons.arrow_back_outlined),
-      //   title: const Text('智能公交——预约响应'),
-      // ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+    return  MaterialApp(
+     /* title: _title,*/
+      debugShowCheckedModeBanner: false,
+      // 显示工程中的网格
+      // debugShowMaterialGrid: true,
+      theme: ThemeData(
+        primarySwatch: createMaterialColor(const Color.fromARGB(250, 89, 151, 94)),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.room,size: 20,),
-            label: '定位',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(null),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person,size: 20,),
-            label: '个人中心',
-          ),
-        ],
-
-        currentIndex: _selectedIndex,
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
-      ),
-      floatingActionButton: Container(
-        height: 70,
-        width: 70,
-        padding: const EdgeInsets.all(5),
-        margin:const EdgeInsets.only(top: 40),
-        decoration:   BoxDecoration(
-            color: const Color.fromARGB(255, 250, 250, 250),
-            borderRadius: BorderRadius.circular(40)
-
-        ),
-        child: FloatingActionButton(
-          backgroundColor: _selectedIndex == 1?Colors.blue:Colors.grey,
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.navigation,
-            size: 30,
-          ),
-          onPressed: (){
-            setState((){
-              _selectedIndex = 1;
-            });
-          },
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      home: const DriverHomePage(),
     );
   }
 }

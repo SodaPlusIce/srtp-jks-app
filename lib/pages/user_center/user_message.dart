@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jtjs/config/appbar_settings.dart';
 import 'package:jtjs/pages/user_center/user_assistant.dart';
 import 'package:jtjs/pages/user_center/user_collection.dart';
 import 'package:jtjs/pages/user_center/user_wallet.dart';
@@ -13,10 +14,8 @@ class _UserMessPageState extends State<UserMessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Messages",style: TextStyle(
-        fontWeight: FontWeight.w900,fontSize: 20,
-      ),),),
-      backgroundColor:  const Color.fromARGB(250, 239, 249, 255),
+      appBar: UnionAppBar(title: "信息提醒",),
+      backgroundColor:  const Color.fromARGB(250, 245, 245, 245),
       body: ListView(
         children: [
           const SizedBox(height: 10,),

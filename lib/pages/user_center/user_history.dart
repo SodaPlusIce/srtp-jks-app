@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import 'package:jtjs/config/appbar_settings.dart';
+
 const String netip = "http://10.0.2.2:5000";
 
 class UserHisPage extends StatefulWidget {
@@ -123,14 +125,8 @@ class _UserHisPageState extends State<UserHisPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("历史记录",
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 20,
-              )),
-        ),
-        backgroundColor: const Color.fromARGB(250, 239, 249, 255),
+        appBar: UnionAppBar(title: "历史记录",),
+        backgroundColor: const Color.fromARGB(250, 245, 245, 245),
         body: ListView.builder(
             itemCount: item.length,
             itemBuilder: (context, index) {
