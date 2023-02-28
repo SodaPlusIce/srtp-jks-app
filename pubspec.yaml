@@ -74,6 +74,20 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: oppoSansBold
+      fonts:
+        - asset: assets/fonts/OPlusSans3-Bold.ttf
+    - family: oppoSansExtraLight
+      fonts:
+        - asset: assets/fonts/OPlusSans3-ExtraLight.ttf
+    - family: oppoSansMedium
+      fonts:
+        - asset: assets/fonts/OPlusSans3-Medium.ttf
+    - family: oppoSansRegular
+      fonts:
+        - asset: assets/fonts/OPlusSans3-Regular.ttf
+
 
   # To add assets to your application, add an assets section, like this:
   assets:
