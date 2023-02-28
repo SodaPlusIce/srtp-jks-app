@@ -4,7 +4,7 @@ import 'dart:convert' as convert;
 
 import 'package:jtjs/config/appbar_settings.dart';
 
-const String netip = "http://10.0.2.2:5000";
+const String netip = "http://192.168.94.27:5000";
 
 class UserHisPage extends StatefulWidget {
   const UserHisPage({Key? key}) : super(key: key);
@@ -98,13 +98,13 @@ class _UserHisPageState extends State<UserHisPage> {
     if (res.statusCode == 200) {
       //由于后端传回来的数据为utf-8编码，因此需要对其进行转换数据格式
       List arrs = convert.jsonDecode(res.body);
-      /* print(arrs);
-        print(arrs[0]);
-        print(arrs[0][0]);*/
+      // print(arrs);
+      //   print(arrs[0]);
+      //   print(arrs[0][0]);
       len = arrs.length;
       for (var i = 0; i < len; i++) {
-        var times=arrs[i][0].toString().substring(4,14);
-        item.add([arrs[i][1], arrs[i][2],"${times.substring(0,4)}-${times.substring(4,6)}-${times.substring(6,8)}-${times.substring(8,10)}"]);
+        var times=arrs[i][0].toString().substring(4,16);
+        item.add([arrs[i][3], arrs[i][4],"${times.substring(0,4)}-${times.substring(4,6)}-${times.substring(6,8)}"]);
       }
       // 对页面进行刷新
       setState(() {});

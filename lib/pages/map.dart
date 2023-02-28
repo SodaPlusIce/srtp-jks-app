@@ -1,23 +1,14 @@
-import 'dart:io';
-
 import 'package:amap_flutter_base/amap_flutter_base.dart';
 import 'package:amap_flutter_location/amap_flutter_location.dart';
-import 'package:amap_flutter_location/amap_location_option.dart';
 import 'package:amap_flutter_map/amap_flutter_map.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:jtjs/config/appbar_settings.dart';
 import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:http/http.dart' as http;
-
 const String netip = "http://10.0.2.2:5000";
-
 const double _kItemExtent = 32.0;
 const List<String> _stationNames = <String>[
   "换乘中心", //0
@@ -109,9 +100,11 @@ class _MapPageState extends State<MapPage> {
 
   /// 上车人数
   int _passNum = 1;
-
+/// 定义出polyline
+  Map<String, Polyline> _polylines = <String, Polyline>{};
   @override
   void initState() {
+    // _add();
     super.initState();
     _mapType = MapType.navi;
 
@@ -187,6 +180,7 @@ class _MapPageState extends State<MapPage> {
   //   _getPoisData();
   // }
 
+  int colorsIndex = 0;
   // 初始添加的marker
   final Map<String, Marker> _initMarkerMap = <String, Marker>{};
   void _addMarker() async {
@@ -306,7 +300,7 @@ class _MapPageState extends State<MapPage> {
     String url = "$netip/getOrderInfo";
     var res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
-      print(res.body);
+      // print(res.body);
     } else {
       print("Failed to get data.~~~");
       // 做出提示，网络连接有问题
@@ -318,54 +312,73 @@ class _MapPageState extends State<MapPage> {
     String url = "$netip/addOrder";
     var res = await http.post(Uri.parse(url), body: {});
     if (res.statusCode == 200) {
-      print(res.body);
+      // print(res.body);
     } else {
       print("Failed to get data.~~~");
     }
   }
+  /// ///////////////////////////////添加地图中的画线
+  List<LatLng> _createPoints() {
+    final List<LatLng> points = <LatLng>[];
+
+    for (int i = 0; i < stopLngLat.length; i++) {
+      points.add (LatLng(stopLngLat[i][1], stopLngLat[i][0]));
+
+    }
+
+    return points;
+  }
+  void _add(){
+    final Polyline polyline = Polyline(
+      color:Colors.red ,
+      width: 6,
+      points: _createPoints(),
+
+    );
+   setState(
+       (){
+         _polylines[polyline.id]=polyline;
+       }
+   );
+  }
 
   @override
   Widget build(BuildContext context) {
+    _add();
     _addMarker(); //添加各站点的marker
+    final AMapWidget map = AMapWidget(
+      polylines: Set<Polyline>.of(_polylines.values),
+      // 隐私政策包含高德 必须填写
+      privacyStatement: ConstConfig.amapPrivacyStatement,
+      apiKey: ConstConfig.amapApiKeys,
+      // 初始化地图中心
+      initialCameraPosition: currentLocation,
+      //定位小蓝点
+      myLocationStyleOptions: MyLocationStyleOptions(
+        true,
+      ),
+      // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
+      mapType: _mapType,
+      // 缩放级别范围
+      minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
+      // onPoiTouched: _onMapPoiTouched,
+      markers: Set<Marker>.of(_initMarkerMap.values),
+      // compassEnabled: true,
+      trafficEnabled: true,
+      // 地图创建成功时返回AMapController
+      onMapCreated: (AMapController controller) {
+        // mapController = controller;
+        setState(() {
+          mapController = controller;
+          getApprovalNumber();
+        });
+      },
+    );
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar:UnionAppBar(title: "预约响应",colors: const Color.fromARGB(255, 247, 251, 255)),
       body: GFFloatingWidget(
-        //垂直偏移量
-        // verticalPosition: MediaQuery.of(context).size.height * 0.01,
-        // // 水平偏移量
-        // horizontalPosition: MediaQuery.of(context).size.width * 0.01,
-        //正文内容
-        body: AMapWidget(
-          // 隐私政策包含高德 必须填写
-          privacyStatement: ConstConfig.amapPrivacyStatement,
-          apiKey: ConstConfig.amapApiKeys,
-          // 初始化地图中心店
-          initialCameraPosition: currentLocation,
-          //定位小蓝点
-          myLocationStyleOptions: MyLocationStyleOptions(
-            true,
-          ),
-          // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
-          mapType: _mapType,
-          // 缩放级别范围
-          minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
-          // onPoiTouched: _onMapPoiTouched,
-          markers: Set<Marker>.of(_initMarkerMap.values),
-          compassEnabled: true,
-          trafficEnabled: true,
-          // 地图创建成功时返回AMapController
-          onMapCreated: (AMapController controller) {
-            // mapController = controller;
-            setState(() {
-              mapController = controller;
-              getApprovalNumber();
-            });
-          },
-        ),
-        // const SizedBox(height: 1,),
-        //背景是否模糊
-        // showBlurness: true,
+        body: map,
         //背景模糊的颜色
         blurnessColor: Colors.blue,
         child: SizedBox(
@@ -452,7 +465,7 @@ class _MapPageState extends State<MapPage> {
                     Visibility(
                         visible: basic,
                         child: Container(
-                          height: 200,
+                          height: 180,
                           alignment: Alignment.center,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -858,116 +871,10 @@ class _MapPageState extends State<MapPage> {
 
       // 地图以下的文字和按钮组件
 
-      // const Padding(padding: EdgeInsets.all(10)),
-
-      /*floatingActionButton: SpeedDial(
-        // marginRight: 25, //右边距
-        // marginBottom: 50, //下边距
-        animatedIcon: AnimatedIcons.menu_close, //带动画的按钮
-        animatedIconTheme: const IconThemeData(size: 22.0),
-        // visible: isShow, //是否显示按钮
-        closeManually: false, //是否在点击子按钮后关闭展开项
-        curve: Curves.bounceIn, //展开动画曲线
-        overlayColor: Colors.black, //遮罩层颜色
-        overlayOpacity: 0.5, //遮罩层透明度
-        onOpen: () => print('OPENING DIAL'), //展开回调
-        onClose: () => print('DIAL CLOSED'), //关闭回调
-        tooltip: 'Speed Dial', //长按提示文字
-        heroTag: 'speed-dial-hero-tag', //hero标记
-        backgroundColor: Colors.blue, //按钮背景色
-        foregroundColor: Colors.white, //按钮前景色/文字色
-        elevation: 8.0, //阴影
-        shape: const CircleBorder(), //shape修饰
-        children: [
-          //子按钮
-          SpeedDialChild(
-              label: '普通地图',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () {
-                // onButtonClick(1);
-                setState(() {
-                  _mapType = MapType.normal;
-                });
-              }),
-          SpeedDialChild(
-            label: '卫星地图',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                _mapType = MapType.satellite;
-              });
-            },
-          ),
-          SpeedDialChild(
-            label: '导航地图',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                _mapType = MapType.navi;
-              });
-            },
-          ),
-          SpeedDialChild(
-            label: '公交地图',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                _mapType = MapType.bus;
-              });
-            },
-          ),
-          SpeedDialChild(
-            label: '黑夜模式',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              setState(() {
-                _mapType = MapType.night;
-              });
-            },
-          ),
-        ],
-      ),*/
     );
   }
 
-  // Widget _buildPoisList() {
-  //   return Column(
-  //     children: poisData.map((value) {
-  //       return ListTile(
-  //         title: Text(value['name']),
-  //         subtitle: Text(
-  //             '${value['pname']}${value['cityname']}${value['adname']}${value['address']}'),
-  //         onTap: () async {
-  //           List locationData = value['location'].split(',');
-  //           double l1 = double.parse(locationData[1]);
-  //           double l2 = double.parse(locationData[0]);
-  //           markerLatitude = l2;
-  //           markerLongitude = l1;
-  //           // _getPoisData();
-  //           // _addMarker(LatLng(l1, l2));
-  //           // _changeCameraPosition(LatLng(l1, l2));
-  //         },
-  //         onLongPress: () {
-  //           showCupertinoDialog(
-  //               context: context,
-  //               builder: (context) {
-  //                 return CupertinoAlertDialog(
-  //                   title: const Text('提示'),
-  //                   content: const Text('是否进入高德地图导航'),
-  //                   actions: <Widget>[
-  //                     CupertinoDialogAction(
-  //                       child: const Text('取消'),
-  //                       onPressed: () {
-  //                         Navigator.pop(context);
-  //                       },
-  //                     ),
-  //                     CupertinoDialogAction(
-  //                       child: Text('确认'),
-  //                       onPressed: () async {
-  //                         String title = value['name'];
-  //                         var locationData = value['location'].split(',');
-  //                         double l1 = double.parse(locationData[1]);
-  //                         double l2 = double.parse(locationData[0]);
+
 
   /// 获取周边数据
   // Future<void> _getPoisData() async {
