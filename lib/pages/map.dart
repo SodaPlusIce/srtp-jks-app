@@ -120,7 +120,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     initSocket();
-    _mapType = MapType.navi;
+    _mapType = MapType.bus;
 
     /// 设置Android和iOS的apikey，
     AMapFlutterLocation.setApiKey(ConstConfig.androidKey, ConstConfig.iosKey);
@@ -203,10 +203,10 @@ class _MapPageState extends State<MapPage> {
     }
     // 添加车辆marker
     // 先获取现在在跑的车辆数
-    int carNum = 1;
-    LatLng pos = LatLng(stopLngLat[0][1], stopLngLat[0][0]);
+    int carNum = 6;
     for (int i = 1; i <= carNum; i++) {
-      Marker marker = Marker(
+      LatLng pos = LatLng(stopLngLat[i][1], stopLngLat[i][0]);
+      Marker marker =new  Marker(
           position: pos,
           icon: BitmapDescriptor.fromIconPath("assets/images/bus$i$i$i.png"));
       _initMarkerMap[marker.id] = marker;
@@ -377,6 +377,7 @@ class _MapPageState extends State<MapPage> {
     _add();
     _addMarker(); //添加各站点的marker
     final AMapWidget map = AMapWidget(
+
       polylines: Set<Polyline>.of(_polylines.values),
       // 隐私政策包含高德 必须填写
       privacyStatement: ConstConfig.amapPrivacyStatement,
