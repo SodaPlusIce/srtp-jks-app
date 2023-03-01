@@ -54,6 +54,9 @@ dependencies:
   #GETX
   get: ^4.6.5
   http: ^0.13.5
+  socket_io_client: ^2.0.1
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

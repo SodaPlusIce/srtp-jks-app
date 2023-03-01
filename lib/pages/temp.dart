@@ -28,6 +28,7 @@ class _TempPageForTestState extends State<TempPageForTest> {
           TextButton(onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (context)=> const WaitingCarPage()));
           }, child: const Text("等车界面")),
+          TextButton(onPressed: (){}, child:const Text("确定下单"))
         ],
       ),
     );

@@ -1,0 +1,78 @@
+import 'dart:async';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter/material.dart';
+void main() => runApp(new MyApp());
+
+class MyApp extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return MaterialApp(
+      title:"WebSocket",
+      home: WebSocket(),
+    );
+  }
+}
+
+class WebSocket extends StatefulWidget{
+  @override
+  _WebSocketState createState()=> new _WebSocketState();
+}
+
+class _WebSocketState extends State<WebSocket>{
+  // late WebSocketChannel channel;
+  static const YOUR_SERVER_IP = '192.168.222.27';
+  static const YOUR_SERVER_PORT = '5000';
+  static const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+  //初始化，连接websocket
+  @override
+  void initState() {
+    initSocket();
+    _alwaysEmit();
+    super.initState();
+  }
+  late IO.Socket socket;
+  initSocket() {
+    socket = IO.io(URL, <String, dynamic>{
+      'autoConnect': false,
+      'transports': ['websocket'],
+    });
+    socket.connect();
+    socket.onConnect((_) {
+      print('Connection established');
+    });
+    socket.onDisconnect((_) => print('Connection Disconnection'));
+    socket.onConnectError((err) => print(err));
+    socket.onError((err) => print(err));
+  }
+ _alwaysEmit(){
+    int _count =0;
+    Timer.periodic(const Duration(seconds: 3), (timer) {
+      _count++;
+      socket.emit("app_pos");
+      socket.on("app_pos", (data) => print(data));
+      if (_count == 100){
+        timer.cancel();
+      }
+    });
+ }
+
+  @override
+  Widget build(BuildContext context){
+    return  Scaffold(
+      appBar: AppBar(
+        title: const Text('WebSocket'),
+      ),
+      body: const Center(
+        child: Text("yes"),
+      ),
+    );
+  }
+
+  //页面销毁时关闭连接
+  @override
+  void dispose() {
+    socket.disconnect();
+    socket.dispose();
+    super.dispose();
+  }
+}

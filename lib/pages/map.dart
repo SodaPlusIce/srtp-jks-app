@@ -8,8 +8,16 @@ import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:http/http.dart' as http;
-const String netip = "http://10.0.2.2:5000";
+import 'dart:async';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+/// 连接后端的接口信息
+const YOUR_SERVER_IP = '192.168.222.27';
+const YOUR_SERVER_PORT = '5000';
+const String netip = 'http://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+
 const double _kItemExtent = 32.0;
+/// 站点名称
 const List<String> _stationNames = <String>[
   "换乘中心", //0
   "镇西村", //1
@@ -20,6 +28,8 @@ const List<String> _stationNames = <String>[
   "花园湾村", //6
   "南坝村", //7
 ];
+
+/// 终点站的坐标信息
 const List<List> stopLngLat = <List>[
   [120.265966, 30.721857], //0
   [120.247437, 30.724458], //1
@@ -100,12 +110,16 @@ class _MapPageState extends State<MapPage> {
 
   /// 上车人数
   int _passNum = 1;
-/// 定义出polyline
+  /// 定义出polyline
   Map<String, Polyline> _polylines = <String, Polyline>{};
+  /// websocket定义
+  late IO.Socket socket;
+
+  /// ////////////////////////////初始化程序代码///////////////////////////////////
   @override
   void initState() {
-    // _add();
     super.initState();
+    initSocket();
     _mapType = MapType.navi;
 
     /// 设置Android和iOS的apikey，
@@ -119,28 +133,23 @@ class _MapPageState extends State<MapPage> {
     // requestPermission();
   }
 
-  // Future<void> requestPermission() async {
-  //   final status = await Permission.location.request();
-  //   permissionStatus = status;
-  //   switch (status) {
-  //     case PermissionStatus.denied:
-  //       print("拒绝");
-  //       break;
-  //     case PermissionStatus.granted:
-  //       requestLocation();
-  //       break;
-  //     case PermissionStatus.limited:
-  //       print("限制");
-  //       break;
-  //     default:
-  //       print("其他状态");
-  //       requestLocation();
-  //       break;
-  //   }
-  // }
+  /// ////////////////////////////初始化socket的连接内容///////////////////////////
+  initSocket() {
+    socket = IO.io(URL, <String, dynamic>{
+      'autoConnect': false,
+      'transports': ['websocket'],
+    });
+    socket.connect();
+    socket.onConnect((_) {
+      print('Connection established');
+    });
+    socket.onDisconnect((_) => print('Connection Disconnection'));
+    socket.onConnectError((err) => print(err));
+    socket.onError((err) => print(err));
+  }
 
-  /// 请求位置
-  // void requestLocation() {
+  /// ///////////////////////////请求位置/////////////////////////////////////////
+ /* // void requestLocation() {
   //   location = AMapFlutterLocation()
   //     ..setLocationOption(AMapLocationOption())
   //     ..onLocationChanged().listen((event) {
@@ -179,10 +188,11 @@ class _MapPageState extends State<MapPage> {
   //   });
   //   _getPoisData();
   // }
-
+*/
   int colorsIndex = 0;
   // 初始添加的marker
   final Map<String, Marker> _initMarkerMap = <String, Marker>{};
+  /// ///////////////////////////添加站点的maker信息///////////////////////////////
   void _addMarker() async {
     // 添加站点marker
     for (int i = 0; i < stopLngLat.length; i++) {
@@ -201,12 +211,12 @@ class _MapPageState extends State<MapPage> {
           icon: BitmapDescriptor.fromIconPath("assets/images/bus$i$i$i.png"));
       _initMarkerMap[marker.id] = marker;
     }
-    // BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
+ /*   // BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
     //   const ImageConfiguration(),
     //   "assets/images/bus111.png",
     // );
     // Marker marker = Marker(position: pos, icon: markerbitmap);
-    // _initMarkerMap[marker.id] = marker;
+    // _initMarkerMap[marker.id] = marker;*/
   }
 
   /// 清除marker
@@ -236,7 +246,7 @@ class _MapPageState extends State<MapPage> {
   //   );
   // }
 
-  /// 获取审图号
+  /// ///////////////////////////获取审图号///////////////////////////////////////
   void getApprovalNumber() async {
     //普通地图审图号
     String? mapContentApprovalNumber =
@@ -248,11 +258,15 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void dispose() {
+    // 定位销毁
     location?.destroy();
+    // socket销毁
+    socket.disconnect();
+    socket.dispose();
     super.dispose();
   }
 
-  /// 显示选择对话框
+  /// ///////////////////////////显示选择对话框////////////////////////////////////
   void _showDialog(Widget child) {
     showCupertinoModalPopup<void>(
         context: context,
@@ -274,7 +288,7 @@ class _MapPageState extends State<MapPage> {
             ));
   }
 
-  /// 弹出"选择出行方式"旁的info按钮对应的对话框
+  /// ///////////////////////////弹出"选择出行方式"旁的info按钮对应的对话框////////////
   Future<bool?> showDeleteConfirmDialog() {
     return showDialog<bool>(
       context: context,
@@ -295,7 +309,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  /// 调用接口： getOrderInfo
+  /// ///////////////////////////调用接口： getOrderInfo//////////////////////////
   Future<void> getOrderInfo() async {
     String url = "$netip/getOrderInfo";
     var res = await http.get(Uri.parse(url));
@@ -307,7 +321,7 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  /// 调用接口： addOrder
+  /// ///////////////////////////调用接口： addOrder//////////////////////////////
   Future<void> addOrder() async {
     String url = "$netip/addOrder";
     var res = await http.post(Uri.parse(url), body: {});
@@ -317,13 +331,11 @@ class _MapPageState extends State<MapPage> {
       print("Failed to get data.~~~");
     }
   }
-  /// ///////////////////////////////添加地图中的画线
+  /// ///////////////////////////添加地图中的画线//////////////////////////////////
   List<LatLng> _createPoints() {
     final List<LatLng> points = <LatLng>[];
-
     for (int i = 0; i < stopLngLat.length; i++) {
       points.add (LatLng(stopLngLat[i][1], stopLngLat[i][0]));
-
     }
 
     return points;
@@ -341,6 +353,24 @@ class _MapPageState extends State<MapPage> {
        }
    );
   }
+  /// ///////////////////////////利用websocket进行车辆的实时数据传输/////////////////
+/*
+* 这个方法等到系统中的乘客在打车以后，对其进行触发使用
+* TextButton(onPressed: (){showCatDemo}, child:const Text("确定下单"))
+* */
+  showCarRouteDemo(){
+    int _count =0;
+    Timer.periodic(const Duration(seconds: 3), (timer) {
+      _count++;
+      socket.emit("app_pos");
+      socket.on("app_pos", (data) => print(data));
+      if (_count == 100){
+        timer.cancel();
+      }
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -381,7 +411,7 @@ class _MapPageState extends State<MapPage> {
         body: map,
         //背景模糊的颜色
         blurnessColor: Colors.blue,
-        child: SizedBox(
+       /* child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Opacity(
             opacity: 0.818,
@@ -866,7 +896,7 @@ class _MapPageState extends State<MapPage> {
                   ],
                 )),
           ),
-        ),
+        ),*/
       ),
 
       // 地图以下的文字和按钮组件
