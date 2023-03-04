@@ -333,6 +333,7 @@ class _MapPageState extends State<MapPage> {
       "stop_on": order.getCarLocation,
       "stop_off": order.destination,
       "passengers": order.passengerNum,
+      "expected_on":order.expected_on
     });
     var res = await dio.post(url, data: formData);
     // Response res  = await dio.post(url,data:jsonEncode(order));
@@ -940,7 +941,7 @@ class _MapPageState extends State<MapPage> {
                                             onPressed: () {
                                               String on=isReserve ? _selectedOnStationName : _selectedOnStationNameNow;
                                               String off=isReserve ? _selectedOffStationName : _selectedOffStationNameNow;
-                                             Order order = new Order(on, off, _passNum);
+                                             Order order = new Order(on, off, _passNum,reserveTime);
                                               addOrderInfo(order);
                                             },
                                             style: ButtonStyle(
