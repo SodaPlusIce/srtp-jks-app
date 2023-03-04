@@ -320,13 +320,22 @@ class _MapPageState extends State<MapPage> {
   }
 
   /// ////////////////////////调用接口： test/////////////////////////////////////
-  Future<void> addOrderInfo(String on,String off, int pass) async {
+  Future<void> addOrderInfo(Order order) async {
   /*  FormData formData = FormData.fromMap(
         {"stop_on": on, "stop_off": off,"passengers":pass});*/
 
     String url ="$netip/addOrder";
-    Map params = {'stop_on': on, 'stop_off':off,'passengers': pass};
-    Response res  = await Dio().post(url,data:params);
+    BaseOptions options = BaseOptions(
+      responseType: ResponseType.plain,
+    );
+    Dio dio = Dio(options);
+    FormData formData = FormData.fromMap({
+      "stop_on": order.getCarLocation,
+      "stop_off": order.destination,
+      "passengers": order.passengerNum,
+    });
+    var res = await dio.post(url, data: formData);
+    // Response res  = await dio.post(url,data:jsonEncode(order));
     // var res = await http.post(Uri.parse(url),body: );
     if (res.statusCode == 200) {
       //由于后端传回来的数据为utf-8编码，因此需要对其进行转换数据格式
@@ -931,7 +940,8 @@ class _MapPageState extends State<MapPage> {
                                             onPressed: () {
                                               String on=isReserve ? _selectedOnStationName : _selectedOnStationNameNow;
                                               String off=isReserve ? _selectedOffStationName : _selectedOffStationNameNow;
-                                              addOrderInfo(on,off,_passNum);
+                                             Order order = new Order(on, off, _passNum);
+                                              addOrderInfo(order);
                                             },
                                             style: ButtonStyle(
                                                 shape:
