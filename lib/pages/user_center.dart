@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:jtjs/config/appbar_settings.dart';
 import 'package:jtjs/config/color.dart';
 import 'package:jtjs/pages/user_center/user_assistant.dart';
@@ -513,7 +515,7 @@ class _CenterPageState extends State<CenterPage> {
               ),
               ListTile(
                 title: Text(
-                  "个性签名: 不知道写什么东西进去",
+                  "个性签名: 东南大学交通科技竞赛",
                   style: unionTextStyle,
                 ),
               ),
@@ -573,18 +575,20 @@ class _CenterPageState extends State<CenterPage> {
           Column(
             children:  [
               ListTile(
-                leading: const Icon(Icons.feedback_outlined),
-                title:  Text(
-                  "联系客服",
-                  style: unionTextStyle,
+                  leading: const Icon(Icons.feedback_outlined),
+                  title:  Text(
+                    "联系客服",
+                    style: unionTextStyle,
+                  ),
+                  onTap: (){
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>const UserAssistPage()));
+                  },
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                  ),
                 ),
-                onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=>const UserAssistPage()));
-                },
-                trailing: const Icon(
-                  Icons.chevron_right,
-                ),
-              ),
+
+
 
 
             ],

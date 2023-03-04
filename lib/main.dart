@@ -7,6 +7,7 @@ import 'package:jtjs/pages/temp.dart';
 import './pages/location.dart';
 import './pages/map.dart';
 import './pages/user_center.dart';
+import 'package:via_logger/via_logger.dart';
 
 void main() => runApp(const MyApp());
 
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   static const String _title = '智慧公交——定位';
   @override
   Widget build(BuildContext context) {
+    Logger.minLevel= Level.WARNING;
     return  MaterialApp(
      /* title: _title,*/
       debugShowCheckedModeBanner: false,
