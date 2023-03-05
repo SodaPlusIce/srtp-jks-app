@@ -3,12 +3,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'package:jtjs/config/appbar_settings.dart';
-import 'package:jtjs/config/config.dart';
+
+const YOUR_SERVER_IP = '192.168.166.27';
+const YOUR_SERVER_PORT = '5000';
+const String netip = 'http://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+
 class UserHisPage extends StatefulWidget {
   const UserHisPage({Key? key}) : super(key: key);
+
   @override
   State<UserHisPage> createState() => _UserHisPageState();
 }
+
 class _UserHisPageState extends State<UserHisPage> {
   List<List<String>> item = [];
   int len = 0;
@@ -38,7 +45,7 @@ class _UserHisPageState extends State<UserHisPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    "出发站:$start\n""终点站:$stop",
+                    "出发站:$start\n" "终点站:$stop",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -88,8 +95,12 @@ class _UserHisPageState extends State<UserHisPage> {
       //   print(arrs[0][0]);
       len = arrs.length;
       for (var i = 0; i < len; i++) {
-        var times=arrs[i][0].toString().substring(4,16);
-        item.add([arrs[i][3], arrs[i][4],"${times.substring(0,4)}-${times.substring(4,6)}-${times.substring(6,8)}"]);
+        var times = arrs[i][0].toString().substring(4, 16);
+        item.add([
+          arrs[i][3],
+          arrs[i][4],
+          "${times.substring(0, 4)}-${times.substring(4, 6)}-${times.substring(6, 8)}"
+        ]);
       }
       // 对页面进行刷新
       setState(() {});
@@ -110,7 +121,9 @@ class _UserHisPageState extends State<UserHisPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: UnionAppBar(title: "历史记录",),
+        appBar: UnionAppBar(
+          title: "历史记录",
+        ),
         backgroundColor: const Color.fromARGB(250, 245, 245, 245),
         body: ListView.builder(
             itemCount: item.length,
