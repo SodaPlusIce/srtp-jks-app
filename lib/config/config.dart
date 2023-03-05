@@ -18,8 +18,14 @@ class ConstConfig {
   /// 构造AMapKeyConfig
   static const AMapApiKey amapApiKeys = AMapApiKey(androidKey: androidKey);
 
-  /// 注意：[AMapPrivacyStatement]的'hasContains''hasShow''hasAgree'这三个参数中有一个为false，高德SDK均不会工作，会造成地图白屏等现象
 
+  /// 注意：[AMapPrivacyStatement]的'hasContains''hasShow''hasAgree'这三个参数中有一个为false，高德SDK均不会工作，会造成地图白屏等现象
   static const AMapPrivacyStatement amapPrivacyStatement =
       AMapPrivacyStatement(hasContains: true, hasShow: true, hasAgree: true);
+  /// 连接后端的接口信息
+  static const YOUR_SERVER_IP = '192.168.94.40';
+  static const YOUR_SERVER_PORT = '5000';
+  static const String netip = 'http://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+  static const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+
 }

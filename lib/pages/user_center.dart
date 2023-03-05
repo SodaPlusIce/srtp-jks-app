@@ -456,7 +456,7 @@ class _CenterPageState extends State<CenterPage> {
           Column(
             children: [
               // 这段做个人信息内容
-              ListTile(
+            /*  ListTile(
                 title: Text(
                   "头像",
                   style: unionTextStyle,
@@ -469,12 +469,13 @@ class _CenterPageState extends State<CenterPage> {
                     fit: BoxFit.cover,
                   ),
                 ),
-              ),
+              ),*/
               ListTile(
                 title: Text(
                   "姓名: cdw",
                   style: unionTextStyle,
                 ),
+                onTap: (){},
               ),
               ListTile(
                 title:   Row(
@@ -492,6 +493,8 @@ class _CenterPageState extends State<CenterPage> {
                     )
                   ],
                 ),
+                onTap: (){},
+
               ),
               ListTile(
                 title: Column(
@@ -506,59 +509,41 @@ class _CenterPageState extends State<CenterPage> {
                           CupertinoButton(
                               onPressed: _changeBirthState,
                               child: Text(
-                                  '$dateTime'.toString().substring(0, 10))),
+                                  '$dateTime'.toString().substring(0, 10),
+                                style:unionTextStyle,
+                              )),
                         ],
                       ),
                     )
                   ],
                 ),
+                onTap: (){},
               ),
               ListTile(
                 title: Text(
                   "个性签名: 东南大学交通科技竞赛",
                   style: unionTextStyle,
                 ),
+                onTap: (){},
+
               ),
               ListTile(
                 title: Text(
                   "系统账号: 123456789",
                   style: unionTextStyle,
                 ),
+                onTap: (){},
               ),
               ListTile(
                 title: Text(
                   "手机号:15901013972",
                   style: unionTextStyle,
                 ),
+                onTap: (){},
+
               ),
             ],
           ),
-          /*Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: const EdgeInsets.all(5),
-            color: Colors.white,
-            shadowColor: Colors.white10,
-            elevation: 10,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ListTile(
-                  title: Text(
-                    "系统账号: 123456789",
-                    style: unionTextStyle,
-                  ),
-                ),
-                ListTile(
-                  title: Text(
-                    "手机号:15901013972",
-                    style: unionTextStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),*/
           SizedBox(
               height: 40,
               child: Row(
@@ -616,6 +601,8 @@ class _CenterPageState extends State<CenterPage> {
                   style: unionTextStyle,
                 ),
                 trailing:const Icon(Icons.chevron_right),
+                onTap: (){},
+
               ),
                ListTile(
                 leading:const Icon(Icons.share),
@@ -624,7 +611,9 @@ class _CenterPageState extends State<CenterPage> {
                   style: unionTextStyle,
                 ),
                 trailing:const Icon(Icons.chevron_right),
-              ),
+                 onTap: (){},
+
+               ),
                ListTile(
                 leading:const Icon(Icons.more_horiz),
                 title: Text(
@@ -632,192 +621,11 @@ class _CenterPageState extends State<CenterPage> {
                   style: unionTextStyle,
                 ),
                 trailing: const Icon(Icons.chevron_right),
-              )
+                 onTap: (){},
+
+               )
             ],
           ),
-
-          // 完整的条目
-          /* Container(
-            // shape: RoundedRectangleBorder(
-            //   borderRadius: BorderRadius.circular(20),
-            // ),
-            margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            // color: const Color.fromARGB(250, 250, 252, 254),
-            // elevation: 10,
-            // shadowColor: const Color.fromARGB(250, 231, 241, 251),
-            child: Row(
-              children: [
-                const Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
-                const Expanded(flex:10,child:SizedBox(
-                  child: Text(
-                    "我创建的文件夹",
-                    style:
-                    TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
-                  ),
-                ),),
-                const Expanded( flex: 10,child: SizedBox(
-                  width: 70,
-                  height: 10,
-                )),
-
-                Expanded(
-                    flex: 8,
-                    child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      color: Colors.blueAccent,
-                      icon: const Icon(
-                        Icons.add,
-                      ),
-                      // child:  const Text("圆角"),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      color: Colors.blueAccent,
-                      icon: const Icon(
-                        Icons.list,
-                      ),
-                    ),
-                  ],
-                ))
-              ],
-            ),
-          ),*/
-          //文件夹内容（目前是循环体）
-          /*Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2.0,
-                      color: const Color.fromARGB(250, 221, 221, 221)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const ListTile(
-                  leading: Icon(Icons.system_update_tv_outlined),
-                  title: Text(
-                    "南京市",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text("5个"),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2.0,
-                      color: const Color.fromARGB(250, 221, 221, 221)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const ListTile(
-                  leading: Icon(Icons.system_update_tv_outlined),
-                  title: Text(
-                    "南京市",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text("5个"),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2.0,
-                      color: const Color.fromARGB(250, 221, 221, 221)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const ListTile(
-                  leading: Icon(Icons.system_update_tv_outlined),
-                  title: Text(
-                    "南京市",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text("5个"),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2.0,
-                      color: const Color.fromARGB(250, 221, 221, 221)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const ListTile(
-                  leading: Icon(Icons.system_update_tv_outlined),
-                  title: Text(
-                    "南京市",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text("5个"),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2.0,
-                      color: const Color.fromARGB(250, 221, 221, 221)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const ListTile(
-                  leading: Icon(Icons.system_update_tv_outlined),
-                  title: Text(
-                    "南京市",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text("5个"),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 8, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2.0,
-                      color: const Color.fromARGB(250, 221, 221, 221)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const ListTile(
-                  leading: Icon(Icons.system_update_tv_outlined),
-                  title: Text(
-                    "南京市",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text("5个"),
-                ),
-              ),
-            ],
-          )*/
-
-          // )
-          // ),
         ],
       )),
     );
