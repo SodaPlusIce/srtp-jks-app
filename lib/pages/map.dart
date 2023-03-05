@@ -133,7 +133,6 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     initSocket();
-    // _showInitCarPos();
     _mapType = MapType.bus;
 
     /// 设置Android和iOS的apikey，
@@ -147,11 +146,10 @@ class _MapPageState extends State<MapPage> {
     // requestPermission();
     _addMarkerInit(); //添加各站点的marker
   }
-
   /// ////////////////////////////初始化socket的连接内容///////////////////////////
   initSocket() {
-    socket = IO.io({ConstConfig.URL}, <String, dynamic>{
-      'autoConnect': false,
+      socket = IO.io(ConstConfig.URL,<String, dynamic>{
+      'autoConnect': true,
       'transports': ['websocket'],
     });
     socket.connect();

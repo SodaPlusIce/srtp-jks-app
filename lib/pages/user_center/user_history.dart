@@ -4,10 +4,7 @@ import 'dart:convert' as convert;
 
 import 'package:jtjs/config/appbar_settings.dart';
 
-const YOUR_SERVER_IP = '192.168.166.27';
-const YOUR_SERVER_PORT = '5000';
-const String netip = 'http://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
-const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
+import '../../config/config.dart';
 
 class UserHisPage extends StatefulWidget {
   const UserHisPage({Key? key}) : super(key: key);
@@ -86,6 +83,7 @@ class _UserHisPageState extends State<UserHisPage> {
   /// 调用接口： getOrderInfo
   Future<void> getOrderInfo() async {
     String url = "${ConstConfig.netip}/getOrderInfo";
+    print(url);
     var res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
       //由于后端传回来的数据为utf-8编码，因此需要对其进行转换数据格式
