@@ -18,7 +18,7 @@ import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 /// 连接后端的接口信息
-const YOUR_SERVER_IP = '192.168.166.27';
+const YOUR_SERVER_IP = '127.0.0.1';
 const YOUR_SERVER_PORT = '5000';
 const String netip = 'http://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
 const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
@@ -85,7 +85,7 @@ class _MapPageState extends State<MapPage> {
   double? meLongitude;
 
   /// AppBar的title
-  var title ;
+  var title;
   bool backIcon = false; //待删除相关逻辑
 
   /// 控制地图下方控件的显示
@@ -97,7 +97,7 @@ class _MapPageState extends State<MapPage> {
   bool passNum = false;
 
   /// 预约选项中的时间选择
-  DateTime dateTime = DateTime(2023, 2, 4, 14, 16);
+  DateTime dateTime = DateTime.now();
   String reserveTime = "选择 时间段";
 
   /// 预约 上下车点index,name
@@ -119,6 +119,9 @@ class _MapPageState extends State<MapPage> {
   /// 上车人数
   int _passNum = 1;
 
+  /// 分配的车辆名
+  String _allo_bus = "";
+
   /// 定义出polyline
   final Map<String, Polyline> _polylines = <String, Polyline>{};
 
@@ -126,12 +129,11 @@ class _MapPageState extends State<MapPage> {
   late IO.Socket socket;
 
   /// 浮窗栏的文字样式
-  var overlayTextStyle = const TextStyle(fontSize: 18,
-      fontFamily: 'oppoSansRegular'
-  );
-  var overlayTitleStyle = const TextStyle(fontSize: 16,
-      fontFamily: 'oppoSansMedium'
-  );
+  var overlayTextStyle =
+      const TextStyle(fontSize: 18, fontFamily: 'oppoSansRegular');
+  var overlayTitleStyle =
+      const TextStyle(fontSize: 16, fontFamily: 'oppoSansMedium');
+
   /// ////////////////////////////初始化程序代码///////////////////////////////////
   @override
   void initState() {
@@ -149,9 +151,7 @@ class _MapPageState extends State<MapPage> {
     /// 设置是否已经包含高德隐私政策并弹窗展示显示用户查看，如果未包含或者没有弹窗展示，高德定位SDK将不会工作,这里传true
     AMapFlutterLocation.updatePrivacyShow(true, true);
     // requestPermission();
-    _add();//添加polyline
     _addMarkerInit(); //添加各站点的marker
-
   }
 
   /// ////////////////////////////初始化socket的连接内容///////////////////////////
@@ -192,7 +192,7 @@ class _MapPageState extends State<MapPage> {
     int carNum = 5;
     for (int i = 1; i <= carNum; i++) {
       LatLng pos = LatLng(stopLngLat[i][1], stopLngLat[i][0]);
-      Marker marker =Marker(
+      Marker marker = Marker(
           position: pos,
           icon: BitmapDescriptor.fromIconPath("assets/images/bus$i$i$i.png"));
       _initMarkers[marker.id] = marker;
@@ -202,8 +202,9 @@ class _MapPageState extends State<MapPage> {
   //需要先设置一个空的map赋值给AMapWidget的markers，否则后续无法添加marker
   final Map<String, Marker> _initMarkers = <String, Marker>{};
   LatLng _currentLatLng = const LatLng(39.909187, 116.397451);
+
   /// 添加一个marker
-  void _addMarker(LatLng pos,int i) {
+  void _addMarker(LatLng pos, int i) {
     final Marker marker = Marker(
       position: pos,
       //使用默认hue的方式设置Marker的图标
@@ -230,7 +231,7 @@ class _MapPageState extends State<MapPage> {
       // final ImageConfiguration imageConfiguration =
       // createLocalImageConfiguration(context);
       Marker marker = Marker(
-        // 修改当前路线的图标
+          // 修改当前路线的图标
           icon: BitmapDescriptor.fromIconPath("assets/images/marker_icon.png"),
           position: pos,
           infoWindow: InfoWindow(title: _stationNames[i]));
@@ -321,10 +322,10 @@ class _MapPageState extends State<MapPage> {
 
   /// ////////////////////////调用接口： test/////////////////////////////////////
   Future<void> addOrderInfo(Order order) async {
-  /*  FormData formData = FormData.fromMap(
+    /*  FormData formData = FormData.fromMap(
         {"stop_on": on, "stop_off": off,"passengers":pass});*/
 
-    String url ="$netip/addOrder";
+    String url = "$netip/addOrder";
     BaseOptions options = BaseOptions(
       responseType: ResponseType.plain,
     );
@@ -333,75 +334,45 @@ class _MapPageState extends State<MapPage> {
       "stop_on": order.getCarLocation,
       "stop_off": order.destination,
       "passengers": order.passengerNum,
-      "expected_on":order.expected_on
+      "expected_on": order.expected_on
     });
     var res = await dio.post(url, data: formData);
     // Response res  = await dio.post(url,data:jsonEncode(order));
     // var res = await http.post(Uri.parse(url),body: );
     if (res.statusCode == 200) {
-      //由于后端传回来的数据为utf-8编码，因此需要对其进行转换数据格式
-      print(res.data);
-      // 对页面进行刷新
-      setState(() {});
+      var data = res.data;
+      var index = data.indexOf('S');
+      data = 'S${data[index + 1]}';
+      setState(() {
+        _allo_bus = data;
+      });
+      // 起点到终点显示绿线
+      _add(_stationNames.indexWhere((v) => v == order.getCarLocation),
+          _stationNames.indexWhere((v) => v == order.destination)); //添加polyline
     } else {
       print("Failed to get data.~~~");
       // 做出提示，网络连接有问题
     }
-    //
-    // ///发起post请求
-    // Response response =  await dio.post(url);
-    //
-    // var data = response.data;
-    //
-    // // Response response = await dio
-    // //     .post(url, data: formData);
-    // print("6666");
-    // print(response.data);
-    // print("6666");
-    //
-    // setState(() {});
-
-    //其中 body是请求的请求体 就是请求包含的参数
-    //url就是需要请求的url
-    // String url = "$netip/test";
-    // var res = await http.post(Uri.parse(url), body: json.decode(body), headers: {});
-    // if (res.statusCode == 200) {
-    //   var body = json.decode(res.body);
-    //   return Order.fromJson(body);
-    // } else {
-    //   return null;
-    // }
-  }
-
-  /// ///////////////////////////调用接口： addOrder//////////////////////////////
-  Future<void> addOrder() async {
-    String url = "$netip/addOrder";
-    var res = await http.post(Uri.parse(url), body: {});
-    if (res.statusCode == 200) {
-      // print(res.body);
-    } else {
-      print("Failed to get data.~~~");
-    }
   }
 
   /// ///////////////////////////添加地图中的画线//////////////////////////////////
-  List<LatLng> _createPoints() {
+  List<LatLng> _createPoints(start, end) {
     final List<LatLng> points = <LatLng>[];
-    for (int i = 0; i < stopLngLat.length; i++) {
-      points.add(LatLng(stopLngLat[i][1], stopLngLat[i][0]));
-    }
-
+    // for (int i = 0; i < stopLngLat.length; i++) {
+    points.add(LatLng(stopLngLat[end][1], stopLngLat[end][0]));
+    points.add(LatLng(stopLngLat[start][1], stopLngLat[start][0]));
+    // }
     return points;
   }
 
-  void _add() {
+  void _add(start, end) {
     final Polyline polyline = Polyline(
       // color:Colors.green,
       width: 20,
       customTexture:
           BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
       joinType: JoinType.round,
-      points: _createPoints(),
+      points: _createPoints(start, end),
     );
     setState(() {
       _polylines[polyline.id] = polyline;
@@ -423,15 +394,14 @@ class _MapPageState extends State<MapPage> {
         _removeAll();
         // print("清除成功");
         for (int i = 0; i < data.length; i++) {
-          setState((){
+          setState(() {
             LatLng pos = LatLng(data[i][1], data[i][0]);
-            _addMarker(pos,i+1);
+            _addMarker(pos, i + 1);
           });
           // print("添加成功");
         }
-
       });
-      if (count == 5){
+      if (count == 5) {
         timer.cancel();
       }
     });
@@ -477,7 +447,7 @@ class _MapPageState extends State<MapPage> {
         body: map,
         //背景模糊的颜色
         blurnessColor: Colors.blue,
-         child: SizedBox(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Opacity(
             opacity: 0.818,
@@ -594,38 +564,38 @@ class _MapPageState extends State<MapPage> {
                                 style: ElevatedButton.styleFrom(
                                     fixedSize: const Size(180, 50)),
                                 onPressed: () {
-                                  // _removeAll();
                                   setState(() {
                                     basic = false;
                                     reserve = true;
                                     gonow = false;
                                     _stepIndex++;
-                                    // title = "预约出行";
+                                    title = "预约出行";
                                     isReserve = true;
                                   });
                                 },
-                                child:  Text(
+                                child: Text(
                                   "预约出行",
                                   style: overlayTextStyle,
                                 ),
                               ),
                               const Padding(padding: EdgeInsets.all(5)),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    fixedSize: const Size(180, 50)),
-                                onPressed: () {
-                                  setState(() {
-                                    basic = false;
-                                    gonow = true;
-                                    reserve = false;
-                                    _stepIndex++;
-                                    // title = "现在出发";
-                                    isReserve = false;
-                                  });
-                                },
-                                child:  Text('现在出发',
-                                    style: overlayTextStyle,)
-                              ),
+                                  style: ElevatedButton.styleFrom(
+                                      fixedSize: const Size(180, 50)),
+                                  onPressed: () {
+                                    setState(() {
+                                      basic = false;
+                                      gonow = true;
+                                      reserve = false;
+                                      _stepIndex++;
+                                      title = "现在出发";
+                                      isReserve = false;
+                                    });
+                                  },
+                                  child: Text(
+                                    '现在出发',
+                                    style: overlayTextStyle,
+                                  )),
                             ],
                           ),
                         )),
@@ -663,7 +633,7 @@ class _MapPageState extends State<MapPage> {
                                           setState(() {
                                             dateTime = newDateTime;
                                             reserveTime =
-                                                '${dateTime.year}-${dateTime.month}-${dateTime.day}'
+                                                '${dateTime.year}-${dateTime.month}-${dateTime.day + 1}'
                                                 ' ${dateTime.hour}:${dateTime.minute}';
                                           });
                                         },
@@ -844,8 +814,7 @@ class _MapPageState extends State<MapPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("请选择乘客数：$_passNum人",
-                                style: overlayTitleStyle),
+                            Text("请选择乘客数：$_passNum人", style: overlayTitleStyle),
                             Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -920,8 +889,7 @@ class _MapPageState extends State<MapPage> {
                                         style: overlayTitleStyle),
                                     Text(
                                         "上车时间：${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}",
-                                        style:
-                                        overlayTitleStyle),
+                                        style: overlayTitleStyle),
                                     Text(
                                         "上车点：${isReserve ? _selectedOnStationName : _selectedOnStationNameNow}",
                                         style: overlayTitleStyle),
@@ -929,6 +897,8 @@ class _MapPageState extends State<MapPage> {
                                         "目的地：${isReserve ? _selectedOffStationName : _selectedOffStationNameNow}",
                                         style: overlayTitleStyle),
                                     Text("乘客数：$_passNum",
+                                        style: overlayTitleStyle),
+                                    Text("分配车辆：$_allo_bus",
                                         style: overlayTitleStyle),
 /*
                                     const Padding(padding: EdgeInsets.all(10)),
@@ -939,9 +909,14 @@ class _MapPageState extends State<MapPage> {
                                         children: [
                                           ElevatedButton(
                                             onPressed: () {
-                                              String on=isReserve ? _selectedOnStationName : _selectedOnStationNameNow;
-                                              String off=isReserve ? _selectedOffStationName : _selectedOffStationNameNow;
-                                             Order order = new Order(on, off, _passNum,reserveTime);
+                                              String on = isReserve
+                                                  ? _selectedOnStationName
+                                                  : _selectedOnStationNameNow;
+                                              String off = isReserve
+                                                  ? _selectedOffStationName
+                                                  : _selectedOffStationNameNow;
+                                              Order order = Order(on, off,
+                                                  _passNum, reserveTime);
                                               addOrderInfo(order);
                                             },
                                             style: ButtonStyle(
@@ -952,11 +927,12 @@ class _MapPageState extends State<MapPage> {
                                                                 BorderRadius
                                                                     .circular(
                                                                         20)))),
-                                            child: const Text("提交订单",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: "oppoSansBold"
-                                            ),),
+                                            child: const Text(
+                                              "提交订单",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily: "oppoSansBold"),
+                                            ),
                                           ),
                                         ]),
                                   ],
