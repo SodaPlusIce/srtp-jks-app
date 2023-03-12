@@ -40,7 +40,7 @@ class _UserWallPageState extends State<UserWallPage> {
                 ),
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 // color: const Color.fromARGB(250, 255, 255, 255),
-                 color: const Color.fromARGB(250, 42, 173, 103),
+                 color:  Colors.greenAccent[400],
                  borderOnForeground: false,
                  elevation: 0,
                 // elevation: 10,

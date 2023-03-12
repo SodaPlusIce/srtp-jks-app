@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jtjs/config/color.dart';
 import 'package:jtjs/driver_pages/my_home_page.dart';
+import 'package:jtjs/pages/AnimationPage.dart';
 import 'package:jtjs/pages/login.dart';
 import 'package:jtjs/pages/my_home_page.dart';
 import 'package:jtjs/pages/temp.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(const Color.fromARGB(250, 89, 151, 94)),
       ),
-      home: const MyHomePage(),
+      home:  MyHome(),
     );
   }
 }

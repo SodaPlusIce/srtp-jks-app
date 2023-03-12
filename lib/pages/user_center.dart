@@ -193,7 +193,7 @@ class _CenterPageState extends State<CenterPage> {
                                 builder: (context) => const UserInfoPage()));*/
                       },
                       child: const Text(
-                        "cdw",
+                        "zcc",
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 26,
@@ -217,145 +217,6 @@ class _CenterPageState extends State<CenterPage> {
           const SizedBox(
             height: 10,
           ),
-          /* Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: const EdgeInsets.all(10),
-                color: const Color.fromARGB(250, 250, 252, 254),
-                // color: const Color.fromARGB(250, 242, 243, 247),
-                elevation: 10,
-                // shadowColor: const Color.fromARGB(a, r, g, b),
-                shadowColor: const Color.fromARGB(250, 231, 241, 251),
-                child: Container(
-                    height: 60,
-                    margin: const EdgeInsets.all(10),
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.history),
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(120, 60)),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                              return const UserHisPage();
-                            }));
-                      },
-                      label: const Text(
-                        '历史记录',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )),
-              ),
-              const Padding(padding: EdgeInsets.all(10)),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: const EdgeInsets.all(10),
-                color: const Color.fromARGB(250, 250, 252, 254),
-                elevation: 10,
-                shadowColor: const Color.fromARGB(250, 231, 241, 251),
-                child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.all(10),
-                  child: TextButton.icon(
-                      icon: const Icon(
-                        Icons.star_border,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(120, 60)),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                              return const UserCollPage();
-                            }));
-                      },
-                      label: const Text(
-                        '我的收藏',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      )),
-                ),
-              ),
-            ],
-          ),*/
-
-          /*Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: const EdgeInsets.all(10),
-                color: const Color.fromARGB(250, 250, 252, 254),
-                elevation: 10,
-                shadowColor: const Color.fromARGB(250, 231, 241, 251),
-                child: Container(
-                    margin: const EdgeInsets.all(10),
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.account_balance_wallet_outlined),
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(120, 60)),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                              return const UserWallPage();
-                            }));
-                      },
-                      label: const Text(
-                        '钱包余额',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )),
-              ),
-              const Padding(padding: EdgeInsets.all(10)),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: const EdgeInsets.all(10),
-                color: const Color.fromARGB(250, 250, 252, 254),
-                elevation: 10,
-                shadowColor: const Color.fromARGB(250, 231, 241, 251),
-                child: Container(
-                    margin: const EdgeInsets.all(10),
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.support_agent_outlined),
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(120, 60)),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                              return const UserAssistPage();
-                            }));
-                      },
-                      label: const Text(
-                        '客服中心',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )),
-              ),
-            ],
-          ),*/
           SizedBox(
               height: 40,
               child: Row(
@@ -369,110 +230,12 @@ class _CenterPageState extends State<CenterPage> {
                   ),
                 ],
               )),
-       /*   Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            margin: const EdgeInsets.all(5),
-            color: Colors.white,
-            shadowColor: Colors.white10,
-            elevation: 20,
-            child: Column(
-              children: [
-                // 这段做个人信息内容
-                ListTile(
-                  title: Text(
-                    "头像",
-                    style: unionTextStyle,
-                  ),
-                  trailing: ClipOval(
-                    child: Image.asset(
-                      'assets/images/lake.jpg',
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  title: Text(
-                    "姓名: cdw",
-                    style: unionTextStyle,
-                  ),
-                ),
-
-                const Divider(),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "    性别:  ",
-                      style: unionTextStyle,
-                    ),
-                    GestureDetector(
-                      onTap: _didClickSelectedGender,
-                      child: Text(
-                        "${pickerChildren[selectedValue]}",
-                        style: unionTextStyle,
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Divider(),
-                Column(
-                  children: [
-                    SizedBox(
-                      child: Row(
-                        children: [
-                          Text(
-                            "    出生日期:",
-                            style: unionTextStyle,
-                          ),
-                          CupertinoButton(
-                              onPressed: _changeBirthState,
-                              child: Text(
-                                  '$dateTime'.toString().substring(0, 10))),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                const Divider(),
-                ListTile(
-                  title: Text(
-                    "个性签名: 不知道写什么东西进去",
-                    style: unionTextStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),*/
           Column(
             children: [
               // 这段做个人信息内容
-            /*  ListTile(
-                title: Text(
-                  "头像",
-                  style: unionTextStyle,
-                ),
-                trailing: ClipOval(
-                  child: Image.asset(
-                    'assets/images/lake.jpg',
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),*/
               ListTile(
                 title: Text(
-                  "姓名: cdw",
+                  "姓名: zcc",
                   style: unionTextStyle,
                 ),
                 onTap: (){},

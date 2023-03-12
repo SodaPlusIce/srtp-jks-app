@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert' as convert;
 
 import 'package:amap_flutter_base/amap_flutter_base.dart';
 import 'package:amap_flutter_location/amap_flutter_location.dart';
@@ -13,9 +13,9 @@ import '../config/Order.dart';
 import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
 
 const double _kItemExtent = 32.0;
 
@@ -61,16 +61,16 @@ class _MapPageState extends State<MapPage> {
   PermissionStatus? permissionStatus;
 
   /// 相机位置
-  CameraPosition currentLocation = const CameraPosition(
+  CameraPosition currentLocation =  CameraPosition(
     target: LatLng(30.716747, 120.265966),
-    zoom: 13.8,
+    // 放缩层级
+    zoom: 13.6,
   );
 
   /// 地图类型
   late MapType _mapType;
 
-  /// 周边数据
-  List poisData = [];
+
 
   var markerLatitude;
   var markerLongitude;
@@ -89,6 +89,7 @@ class _MapPageState extends State<MapPage> {
   bool isReserve = false;
   bool order = false;
   bool passNum = false;
+  bool carOrder = false;
 
   /// 预约选项中的时间选择
   DateTime dateTime = DateTime.now();
@@ -108,7 +109,7 @@ class _MapPageState extends State<MapPage> {
 
   /// 步骤x相关数据
   int _stepIndex = 0;
-  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四"];
+  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四","订单页面"];
 
   /// 上车人数
   int _passNum = 1;
@@ -133,7 +134,8 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     initSocket();
-    _mapType = MapType.bus;
+    // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
+    _mapType = MapType.navi;
 
     /// 设置Android和iOS的apikey，
     AMapFlutterLocation.setApiKey(ConstConfig.androidKey, ConstConfig.iosKey);
@@ -143,6 +145,7 @@ class _MapPageState extends State<MapPage> {
 
     /// 设置是否已经包含高德隐私政策并弹窗展示显示用户查看，如果未包含或者没有弹窗展示，高德定位SDK将不会工作,这里传true
     AMapFlutterLocation.updatePrivacyShow(true, true);
+    _createInitPointsRoutes();
     // requestPermission();
     _addMarkerInit(); //添加各站点的marker
   }
@@ -179,16 +182,7 @@ class _MapPageState extends State<MapPage> {
           infoWindow: InfoWindow(title: _stationNames[i]));
       _initMarkers[marker.id] = marker;
     }
-    // 添加车辆marker
-    // 先获取现在在跑的车辆数
-    int carNum = 5;
-    for (int i = 1; i <= carNum; i++) {
-      LatLng pos = LatLng(stopLngLat[i][1], stopLngLat[i][0]);
-      Marker marker = Marker(
-          position: pos,
-          icon: BitmapDescriptor.fromIconPath("assets/images/bus$i$i$i.png"));
-      _initMarkers[marker.id] = marker;
-    }
+
   }
 
   //需要先设置一个空的map赋值给AMapWidget的markers，否则后续无法添加marker
@@ -223,7 +217,7 @@ class _MapPageState extends State<MapPage> {
       // createLocalImageConfiguration(context);
       Marker marker = Marker(
           // 修改当前路线的图标
-          icon: BitmapDescriptor.fromIconPath("assets/images/marker_icon.png"),
+          icon: BitmapDescriptor.fromIconPath("assets/images/start.png"),
           position: pos,
           infoWindow: InfoWindow(title: _stationNames[i]));
       _initMarkers[marker.id] = marker;
@@ -293,7 +287,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  /// ////////////////////////调用接口： addOrder/////////////////////////////////////
+  /// ////////////////////////调用接口： addOrder/////////////////////////////////
   Future<void> addOrderInfo(Order order) async {
     /*  FormData formData = FormData.fromMap(
         {"stop_on": on, "stop_off": off,"passengers":pass});*/
@@ -331,7 +325,6 @@ class _MapPageState extends State<MapPage> {
   /// ///////////////////////////添加地图中的画线//////////////////////////////////
   List<LatLng> _createPoints(start, end) {
     final List<LatLng> points = <LatLng>[];
-    // for (int i = 0; i < stopLngLat.length; i++) {
     points.add(LatLng(stopLngLat[end][1], stopLngLat[end][0]));
     points.add(LatLng(stopLngLat[start][1], stopLngLat[start][0]));
     // }
@@ -343,7 +336,7 @@ class _MapPageState extends State<MapPage> {
       // color:Colors.green,
       width: 20,
       customTexture:
-          BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
+          BitmapDescriptor.fromIconPath('assets/images/texture_blue.png'),
       joinType: JoinType.round,
       points: _createPoints(start, end),
     );
@@ -351,38 +344,64 @@ class _MapPageState extends State<MapPage> {
       _polylines[polyline.id] = polyline;
     });
   }
-
+  /// ///////////////////////////根据每次的路线信息去构建整体的路线图//////////////////////////////////
+   List<LatLng> pointsOfInitRoute = <LatLng>[];
+  Future<List<LatLng>> _createInitPointsRoutes() async {
+    String url = "${ConstConfig.netip}/routeInitial";
+    var res = await http.get(Uri.parse(url));
+    if (res.statusCode == 200) {
+      //由于后端传回来的数据为utf-8编码，因此需要对其进行转换数据格式
+      List arrs = convert.jsonDecode(res.body);
+      print("myTag");
+      print(arrs);
+      for(var i = 0; i<arrs.length;i++)
+        {
+          for(var j =0;j<arrs[i].length;j++){
+            pointsOfInitRoute.add(LatLng(arrs[i][j][1], arrs[i][j][0]));
+          }
+        }
+      final Polyline polyline = Polyline(
+        // color:Colors.green,
+        width: 20,
+        customTexture:
+        BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
+        joinType: JoinType.round,
+        points: pointsOfInitRoute,
+      );
+      setState(() {
+        _polylines[polyline.id] = polyline;
+      });
+      // 对页面进行刷新
+    } else {
+      print("Failed to get data.~~~");
+      // 做出提示，网络连接有问题
+    }
+    return pointsOfInitRoute;
+  }
   /// ///////////////////////////利用websocket进行车辆的实时数据传输/////////////////
 /*
 * 初始化的时候，将车辆的数据显示在屏幕上
 *
-* */
+**/
   _initCar() {
-    int count = 0;
-    Timer.periodic(const Duration(microseconds: 10), (timer) {
-      count++;
-      socket.emit("app_pos");
-      socket.on("app_pos", (data) {
-        // print(data);
-        _removeAll();
-        // print("清除成功");
-        for (int i = 0; i < data.length; i++) {
-          setState(() {
-            LatLng pos = LatLng(data[i][1], data[i][0]);
-            _addMarker(pos, i + 1);
-          });
-          // print("添加成功");
-        }
-      });
-      if (count == 5) {
-        timer.cancel();
+    socket.emit("app_pos");
+    socket.on("app_pos", (data) {
+      // print(data);
+      _removeAll();
+      // print("清除成功");
+      for (int i = 0; i < data.length; i++) {
+        setState(() {
+          LatLng pos = LatLng(data[i][1], data[i][0]);
+          _addMarker(pos, i + 1);
+        });
+        // print("添加成功");
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     _initCar();
+
     Logger.minLevel = Level.WARNING;
     final AMapWidget map = AMapWidget(
       polylines: Set<Polyline>.of(_polylines.values),
@@ -395,7 +414,6 @@ class _MapPageState extends State<MapPage> {
       myLocationStyleOptions: MyLocationStyleOptions(
         true,
       ),
-      // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
       mapType: _mapType,
       // 缩放级别范围
       minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
@@ -436,7 +454,7 @@ class _MapPageState extends State<MapPage> {
                   children: [
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Visibility(
-                          visible: _stepIndex != 0,
+                          visible: _stepIndex==0||_stepIndex==4?false:true,
                           maintainSize: true,
                           maintainState: true,
                           maintainAnimation: true,
@@ -457,19 +475,23 @@ class _MapPageState extends State<MapPage> {
                                 } else if (_stepIndex == 2) {
                                   passNum = true;
                                   order = false;
+                                } else if (_stepIndex == 3){
+                                  carOrder =true;
                                 }
                               });
                             },
                           )),
-                      const Padding(padding: EdgeInsets.only(left: 95)),
+                      const Padding(padding: EdgeInsets.only(left: 90)),
                       Text(
                         _stepName[_stepIndex],
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16,
+                          fontFamily: "oppoSansMedium"
+                        ),
                       ),
-                      const Padding(padding: EdgeInsets.only(left: 95)),
+                      const Padding(padding: EdgeInsets.only(left: 90)),
                       // 右按钮
                       Visibility(
-                          visible: _stepIndex != 3,
+                          visible: _stepIndex == 3||_stepIndex==4?false:true,
                           maintainSize: true,
                           maintainState: true,
                           maintainAnimation: true,
@@ -524,7 +546,7 @@ class _MapPageState extends State<MapPage> {
                                           ),
                                         ),
                                         const Padding(
-                                            padding: EdgeInsets.all(2)),
+                                            padding: EdgeInsets.fromLTRB(4, 0, 0, 0)),
                                         IconButton(
                                             padding: const EdgeInsets.all(0),
                                             icon:
@@ -871,11 +893,6 @@ class _MapPageState extends State<MapPage> {
                                         style: overlayTitleStyle),
                                     Text("乘客数：$_passNum",
                                         style: overlayTitleStyle),
-                                    Text("分配车辆：$_allo_bus",
-                                        style: overlayTitleStyle),
-/*
-                                    const Padding(padding: EdgeInsets.all(10)),
-*/
                                     Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
@@ -888,9 +905,14 @@ class _MapPageState extends State<MapPage> {
                                               String off = isReserve
                                                   ? _selectedOffStationName
                                                   : _selectedOffStationNameNow;
-                                              Order order = Order(on, off,
+                                              Order? order = Order(on, off,
                                                   _passNum, reserveTime);
+
+                                              this.order = false;
+                                              this.carOrder = true;
+                                              _stepIndex++;
                                               addOrderInfo(order);
+                                              order = null;
                                             },
                                             style: ButtonStyle(
                                                 shape:
@@ -912,6 +934,37 @@ class _MapPageState extends State<MapPage> {
                                 )
                               ],
                             ))),
+                    // 显示出当前的等待界面
+                    Visibility(
+                        visible: carOrder,
+                        child: Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              textBaseline: TextBaseline.ideographic,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        "上车点：${isReserve ? _selectedOnStationName : _selectedOnStationNameNow}",
+                                        style: overlayTitleStyle),
+                                    Text(
+                                        "目的地：${isReserve ? _selectedOffStationName : _selectedOffStationNameNow}",
+                                        style: overlayTitleStyle),
+                                    Text("分配车辆：$_allo_bus",
+                                        style: overlayTitleStyle),
+                                   Text("当前车辆有$_passNum 人",
+                                     style: TextStyle(
+                                       fontFamily: "oppoSansBold",
+                                       fontSize: 30
+                                     ),
+                                   ),
+                                  ],
+                                )
+                              ],
+                            ))),
                     const SizedBox(
                       height: 16,
                       // width: 2000,
@@ -926,12 +979,5 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  /// 获取周边数据
-  // Future<void> _getPoisData() async {
-  //   var response = await Dio().get(
-  //       'https://restapi.amap.com/v3/place/around?key=${ConstConfig.webKey}&location=$markerLatitude,$markerLongitude&keywords=&types=&radius=1000&offset=20&page=1&extensions=base');
-  //   setState(() {
-  //     poisData = response.data['pois'];
-  //   });
-  // }
+
 }

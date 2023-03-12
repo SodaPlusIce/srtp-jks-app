@@ -46,19 +46,19 @@ class _UserCollPageState extends State<UserCollPage> {
         ListTile(
           leading: const Icon(Icons.currency_exchange,color: Color.fromARGB(250, 42, 173, 103), size: 40,),
           title:  Text("出发点:$start",style: const TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: "oppoSansRegular",
             // fontWeight: FontWeight.w700,
             color: Colors.black,
           ),),
           subtitle:  Text("终点站:$stop",style:const TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: "oppoSansRegular",
             // fontWeight: FontWeight.w700,
             color: Colors.black,
           ),),
 
-          trailing: const Text("预计消费50元",style: TextStyle(
+          trailing: const Text("预计消费2元",style: TextStyle(
             fontSize: 23,
             fontFamily: "oppoSansMedium",
             // fontWeight: FontWeight.w900,
@@ -77,7 +77,7 @@ class _UserCollPageState extends State<UserCollPage> {
       body: ListView.builder(
         itemCount: 5,
           itemBuilder: (context,index){
-          return _showCollectionMessages("广州", "上海");
+          return _showCollectionMessages("石淙村", "换乘中心");
       })
     );
   }

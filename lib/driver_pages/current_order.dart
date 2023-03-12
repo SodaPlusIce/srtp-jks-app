@@ -1,17 +1,26 @@
+import 'dart:convert' as convert;
+
 import 'package:amap_flutter_base/amap_flutter_base.dart';
 import 'package:amap_flutter_location/amap_flutter_location.dart';
 import 'package:amap_flutter_map/amap_flutter_map.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:jtjs/config/appbar_settings.dart';
-import '../../config/config.dart';
+import 'package:via_logger/level.dart';
+import 'package:via_logger/logger.dart';
+import '../config/Order.dart';
+import '../config/config.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:getwidget/getwidget.dart';
+import 'dart:async';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 
-const String netip = "http://10.0.2.2:5000";
 const double _kItemExtent = 32.0;
+
+/// 站点名称
 const List<String> _stationNames = <String>[
   "换乘中心", //0
   "镇西村", //1
@@ -22,6 +31,8 @@ const List<String> _stationNames = <String>[
   "花园湾村", //6
   "南坝村", //7
 ];
+
+/// 终点站的坐标信息
 const List<List> stopLngLat = <List>[
   [120.265966, 30.721857], //0
   [120.247437, 30.724458], //1
@@ -53,14 +64,14 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   /// 相机位置
   CameraPosition currentLocation = const CameraPosition(
     target: LatLng(30.716747, 120.265966),
-    zoom: 13.8,
+    // 放缩层级
+    zoom: 13.6,
   );
 
   /// 地图类型
   late MapType _mapType;
 
-  /// 周边数据
-  List poisData = [];
+
 
   var markerLatitude;
   var markerLongitude;
@@ -69,7 +80,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   double? meLongitude;
 
   /// AppBar的title
-  var title = "智慧公交——等候公交车";
+  var title;
   bool backIcon = false; //待删除相关逻辑
 
   /// 控制地图下方控件的显示
@@ -79,9 +90,10 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   bool isReserve = false;
   bool order = false;
   bool passNum = false;
+  bool carOrder = false;
 
   /// 预约选项中的时间选择
-  DateTime dateTime = DateTime(2023, 2, 4, 14, 16);
+  DateTime dateTime = DateTime.now();
   String reserveTime = "选择 时间段";
 
   /// 预约 上下车点index,name
@@ -98,14 +110,32 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
 
   /// 步骤x相关数据
   int _stepIndex = 0;
-  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四"];
+  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四","订单页面"];
 
   /// 上车人数
   int _passNum = 1;
 
+  /// 分配的车辆名
+  String _allo_bus = "";
+
+  /// 定义出polyline
+  final Map<String, Polyline> _polylines = <String, Polyline>{};
+
+  /// websocket定义
+  late IO.Socket socket;
+
+  /// 浮窗栏的文字样式
+  var overlayTextStyle =
+  const TextStyle(fontSize: 18, fontFamily: 'oppoSansRegular');
+  var overlayTitleStyle =
+  const TextStyle(fontSize: 16, fontFamily: 'oppoSansMedium');
+
+  /// ////////////////////////////初始化程序代码///////////////////////////////////
   @override
   void initState() {
     super.initState();
+    initSocket();
+    // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
     _mapType = MapType.navi;
 
     /// 设置Android和iOS的apikey，
@@ -116,34 +146,86 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
 
     /// 设置是否已经包含高德隐私政策并弹窗展示显示用户查看，如果未包含或者没有弹窗展示，高德定位SDK将不会工作,这里传true
     AMapFlutterLocation.updatePrivacyShow(true, true);
+    _createInitPointsRoutes();
     // requestPermission();
+    _addMarkerInit(); //添加各站点的marker
+  }
+  /// ////////////////////////////初始化socket的连接内容///////////////////////////
+  initSocket() {
+    socket = IO.io(ConstConfig.URL,<String, dynamic>{
+      'autoConnect': true,
+      'transports': ['websocket'],
+    });
+    socket.connect();
+    socket.onConnect((_) {
+      print('Connection established');
+    });
+    socket.onDisconnect((_) => print('Connection Disconnection'));
+    socket.onConnectError((err) => print(err));
+    socket.onError((err) => print(err));
   }
 
-  /// 请求位置
-
+  int colorsIndex = 0;
   // 初始添加的marker
   final Map<String, Marker> _initMarkerMap = <String, Marker>{};
-  void _addMarker() async {
+
+  /// ///////////////////////////初始化的时候添加站点的maker信息/////////////////////
+  void _addMarkerInit() async {
     // 添加站点marker
     for (int i = 0; i < stopLngLat.length; i++) {
       LatLng pos = LatLng(stopLngLat[i][1], stopLngLat[i][0]);
+      // final ImageConfiguration imageConfiguration =
+      //     createLocalImageConfiguration(context);
       Marker marker = Marker(
-          position: pos, infoWindow: InfoWindow(title: _stationNames[i]));
-      _initMarkerMap[marker.id] = marker;
-    }
-    // 添加车辆marker
-    // 先获取现在在跑的车辆数
-    int carNum = 1;
-    LatLng pos = LatLng(stopLngLat[0][1], stopLngLat[0][0]);
-    for (int i = 1; i <= carNum; i++) {
-      Marker marker = Marker(
+        // 修改当前路线的图标
+        // icon: BitmapDescriptor.fromIconPath("assets/images/marker_icon.png"),
           position: pos,
-          icon: BitmapDescriptor.fromIconPath("assets/images/bus$i$i$i.png"));
-      _initMarkerMap[marker.id] = marker;
+          infoWindow: InfoWindow(title: _stationNames[i]));
+      _initMarkers[marker.id] = marker;
+    }
+
+  }
+
+  //需要先设置一个空的map赋值给AMapWidget的markers，否则后续无法添加marker
+  final Map<String, Marker> _initMarkers = <String, Marker>{};
+  LatLng _currentLatLng = const LatLng(39.909187, 116.397451);
+  /// 添加一个marker
+  void _addMarker(LatLng pos, int i) {
+    final Marker marker = Marker(
+      position: pos,
+      //使用默认hue的方式设置Marker的图标
+      icon: BitmapDescriptor.fromIconPath("assets/images/bus$i$i$i.png"),
+    );
+    //调用setState触发AMapWidget的更新，从而完成marker的添加
+    setState(() {
+      _currentLatLng = pos;
+      //将新的marker添加到map里
+      _initMarkers[marker.id] = marker;
+    });
+  }
+
+  /// 清除marker
+  void _removeAll() {
+    if (_initMarkers.isNotEmpty) {
+      setState(() {
+        _initMarkers.clear();
+      });
+    }
+    // 添加站点marker
+    for (int i = 0; i < stopLngLat.length; i++) {
+      LatLng pos = LatLng(stopLngLat[i][1], stopLngLat[i][0]);
+      // final ImageConfiguration imageConfiguration =
+      // createLocalImageConfiguration(context);
+      Marker marker = Marker(
+        // 修改当前路线的图标
+          icon: BitmapDescriptor.fromIconPath("assets/images/start.png"),
+          position: pos,
+          infoWindow: InfoWindow(title: _stationNames[i]));
+      _initMarkers[marker.id] = marker;
     }
   }
 
-  /// 获取审图号
+  /// ///////////////////////////获取审图号///////////////////////////////////////
   void getApprovalNumber() async {
     //普通地图审图号
     String? mapContentApprovalNumber =
@@ -155,11 +237,15 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
 
   @override
   void dispose() {
+    // 定位销毁
     location?.destroy();
+    // socket销毁
+    socket.disconnect();
+    socket.dispose();
     super.dispose();
   }
 
-  /// 显示选择对话框
+  /// ///////////////////////////显示选择对话框////////////////////////////////////
   void _showDialog(Widget child) {
     showCupertinoModalPopup<void>(
         context: context,
@@ -181,15 +267,16 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
         ));
   }
 
-  /// 弹出"选择出行方式"旁的info按钮对应的对话框
+  /// ///////////////////////////弹出"选择出行方式"旁的info按钮对应的对话框////////////
   Future<bool?> showDeleteConfirmDialog() {
     return showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("提示"),
-          content: const Text("当前距离项每一分钟自动刷新，并非实时更新\n"
-              "如需要获取实时定位需要手动刷新\n"),
+          content: const Text("出行方式包括两种：预约出行 和 现在出发。\n"
+              "预约出行 指在出行日期前一天通过App进行预约，在预约的上车点及时间点附近乘车。\n"
+              "现在出发 指您当前在站点，通过电子站台或App的操作可以即刻增添订单，完成出行。"),
           actions: <Widget>[
             TextButton(
               child: const Text("我知道了"),
@@ -201,71 +288,156 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
     );
   }
 
-  /// 调用接口： getOrderInfo
-  Future<void> getOrderInfo() async {
-    String url = "$netip/getOrderInfo";
-    var res = await http.get(Uri.parse(url));
+  /// ////////////////////////调用接口： addOrder/////////////////////////////////
+  Future<void> addOrderInfo(Order order) async {
+    /*  FormData formData = FormData.fromMap(
+        {"stop_on": on, "stop_off": off,"passengers":pass});*/
+
+    String url = "${ConstConfig.netip}/addOrder";
+    BaseOptions options = BaseOptions(
+      responseType: ResponseType.plain,
+    );
+    Dio dio = Dio(options);
+    FormData formData = FormData.fromMap({
+      "stop_on": order.getCarLocation,
+      "stop_off": order.destination,
+      "passengers": order.passengerNum,
+      "expected_on": order.expected_on
+    });
+    var res = await dio.post(url, data: formData);
+    // Response res  = await dio.post(url,data:jsonEncode(order));
+    // var res = await http.post(Uri.parse(url),body: );
     if (res.statusCode == 200) {
-      print(res.body);
+      var data = res.data;
+      var index = data.indexOf('S');
+      data = 'S${data[index + 1]}';
+      setState(() {
+        _allo_bus = data;
+      });
+      // 起点到终点显示绿线
+      _add(_stationNames.indexWhere((v) => v == order.getCarLocation),
+          _stationNames.indexWhere((v) => v == order.destination)); //添加polyline
     } else {
       print("Failed to get data.~~~");
       // 做出提示，网络连接有问题
     }
   }
 
-  /// 调用接口： addOrder
-  Future<void> addOrder() async {
-    String url = "$netip/addOrder";
-    var res = await http.post(Uri.parse(url), body: {});
-    if (res.statusCode == 200) {
-      print(res.body);
-    } else {
-      print("Failed to get data.~~~");
-    }
+  /// ///////////////////////////添加地图中的画线//////////////////////////////////
+  List<LatLng> _createPoints(start, end) {
+    final List<LatLng> points = <LatLng>[];
+    // for (int i = 0; i < stopLngLat.length; i++) {
+    points.add(LatLng(stopLngLat[end][1], stopLngLat[end][0]));
+    points.add(LatLng(stopLngLat[start][1], stopLngLat[start][0]));
+    // }
+    return points;
   }
 
+  void _add(start, end) {
+    final Polyline polyline = Polyline(
+      // color:Colors.green,
+      width: 20,
+      customTexture:
+      BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
+      joinType: JoinType.round,
+      points: _createPoints(start, end),
+    );
+    setState(() {
+      _polylines[polyline.id] = polyline;
+    });
+  }
+  /// ///////////////////////////根据每次的路线信息去构建整体的路线图//////////////////////////////////
+  List<LatLng> pointsOfInitRoute = <LatLng>[];
+  Future<List<LatLng>> _createInitPointsRoutes() async {
+    String url = "${ConstConfig.netip}/routeInitial";
+    var res = await http.get(Uri.parse(url));
+    if (res.statusCode == 200) {
+      //由于后端传回来的数据为utf-8编码，因此需要对其进行转换数据格式
+      List arrs = convert.jsonDecode(res.body);
+      print("myTag");
+      print(arrs);
+      for(var i = 0; i<arrs.length;i++)
+      {
+        for(var j =0;j<arrs[i].length;j++){
+          pointsOfInitRoute.add(LatLng(arrs[i][j][1], arrs[i][j][0]));
+        }
+      }
+      final Polyline polyline = Polyline(
+        // color:Colors.green,
+        width: 20,
+        customTexture:
+        BitmapDescriptor.fromIconPath('assets/images/texture_blue.png'),
+        joinType: JoinType.round,
+        points: pointsOfInitRoute,
+      );
+      setState(() {
+        _polylines[polyline.id] = polyline;
+      });
+      // 对页面进行刷新
+    } else {
+      print("Failed to get data.~~~");
+      // 做出提示，网络连接有问题
+    }
+    return pointsOfInitRoute;
+  }
+  /// ///////////////////////////利用websocket进行车辆的实时数据传输/////////////////
+/*
+* 初始化的时候，将车辆的数据显示在屏幕上
+*
+**/
+  _initCar() {
+    socket.emit("app_pos");
+    socket.on("app_pos", (data) {
+      // print(data);
+      _removeAll();
+      // print("清除成功");
+      for (int i = 0; i < data.length; i++) {
+        setState(() {
+          LatLng pos = LatLng(data[i][1], data[i][0]);
+          _addMarker(pos, i + 1);
+        });
+        // print("添加成功");
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    _addMarker(); //添加各站点的marker
+    _initCar();
+
+    Logger.minLevel = Level.WARNING;
+    final AMapWidget map = AMapWidget(
+      polylines: Set<Polyline>.of(_polylines.values),
+      // 隐私政策包含高德 必须填写
+      privacyStatement: ConstConfig.amapPrivacyStatement,
+      apiKey: ConstConfig.amapApiKeys,
+      // 初始化地图中心
+      initialCameraPosition: currentLocation,
+      //定位小蓝点
+      myLocationStyleOptions: MyLocationStyleOptions(
+        true,
+      ),
+      mapType: _mapType,
+      // 缩放级别范围
+      minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
+      // onPoiTouched: _onMapPoiTouched,
+      markers: Set<Marker>.of(_initMarkers.values),
+      // compassEnabled: true,
+      trafficEnabled: true,
+      // 地图创建成功时返回AMapController
+      onMapCreated: (AMapController controller) {
+        // mapController = controller;
+        setState(() {
+          mapController = controller;
+          getApprovalNumber();
+        });
+      },
+    );
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: UnionAppBar(title: "当前订单"),
+      appBar: UnionAppBar(
+          title: "预约响应", colors: const Color.fromARGB(255, 247, 251, 255)),
       body: GFFloatingWidget(
-        //垂直偏移量
-        // verticalPosition: MediaQuery.of(context).size.height * 0.01,
-        // // 水平偏移量
-        // horizontalPosition: MediaQuery.of(context).size.width * 0.01,
-        //正文内容
-        body: AMapWidget(
-          // 隐私政策包含高德 必须填写
-          privacyStatement: ConstConfig.amapPrivacyStatement,
-          apiKey: ConstConfig.amapApiKeys,
-          // 初始化地图中心店
-          initialCameraPosition: currentLocation,
-          //定位小蓝点
-          myLocationStyleOptions: MyLocationStyleOptions(
-            true,
-          ),
-          // 普通地图normal,卫星地图satellite,夜间视图night,导航视图 navi,公交视图bus,
-          mapType: _mapType,
-          // 缩放级别范围
-          minMaxZoomPreference: const MinMaxZoomPreference(3, 20),
-          // onPoiTouched: _onMapPoiTouched,
-          markers: Set<Marker>.of(_initMarkerMap.values),
-          compassEnabled: true,
-          trafficEnabled: true,
-          // 地图创建成功时返回AMapController
-          onMapCreated: (AMapController controller) {
-            // mapController = controller;
-            setState(() {
-              mapController = controller;
-              getApprovalNumber();
-            });
-          },
-        ),
-        // const SizedBox(height: 1,),
-        //背景是否模糊
-        // showBlurness: true,
+        body: map,
         //背景模糊的颜色
         blurnessColor: Colors.blue,
         child: SizedBox(
@@ -312,7 +484,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                   ),
                                   const  Center(
                                     child: Text(
-                                      '当前距离5000m',
+                                      '下一站：银子桥村',
                                       style: TextStyle(
                                         fontSize: 40,
                                         fontWeight: FontWeight.w900,
@@ -320,7 +492,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                       ),
                                     ),
                                   ),
-                                 const SizedBox(height: 30,),
+                                  const SizedBox(height: 30,),
                                 ],
                               )
                           ),
@@ -344,10 +516,9 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                       color: Colors.green,
                                       width: MediaQuery.of(context).size.width * 0.30,
                                       height: 40,
-
                                       child: const Center(
                                         child: Text(
-                                          '刷新',
+                                          '当前人数',
                                           style: TextStyle(
                                             fontSize: 20,
                                             fontFamily:"oppoSansBold" ,
@@ -359,6 +530,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                     onPressed: () {},
                                   ),
                                 ),
+                                const SizedBox(width: 20,),
                                 Center(
                                   child: NeumorphicButton(
                                     style: NeumorphicStyle(
@@ -376,7 +548,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                       height: 40,
                                       child: const Center(
                                         child: Text(
-                                          '取消订单',
+                                          '待上车人数',
                                           style: TextStyle(
                                             fontSize: 20,
                                             fontFamily:"oppoSansBold" ,
@@ -391,92 +563,22 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                               ],
                             ) ,
                           ),
-                         /* Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                            color: const Color.fromARGB(250, 250, 252, 254),
-                            shadowColor:
-                            const Color.fromARGB(250, 231, 241, 251),
-                            elevation: 20,
-                            child: Center(
-                              child:Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: NeumorphicButton(
-                                      style: NeumorphicStyle(
-                                        boxShape: NeumorphicBoxShape.roundRect(
-                                          BorderRadius.circular(20),
-                                        ),
-                                        // color: Colors.grey[200],
-                                        color: Colors.green,
-                                        shape: NeumorphicShape.flat,
-                                      ),
-                                      child: Container(
-                                        color: Colors.green,
-                                        width: MediaQuery.of(context).size.width * 0.30,
-                                        height: 40,
-                                        child: const Center(
-                                          child: Text(
-                                            '刷新',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily:"oppoSansBold" ,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                  ),
-                                  Center(
-                                    child: NeumorphicButton(
-                                      style: NeumorphicStyle(
-                                        boxShape: NeumorphicBoxShape.roundRect(
-                                          BorderRadius.circular(20),
-                                        ),
-                                        // color: Colors.grey[200],
-                                        color: Colors.red,
-                                        shape: NeumorphicShape.flat,
-                                      ),
-                                      child: Container(
-                                        color: Colors.red,
-                                        width: MediaQuery.of(context).size.width * 0.30,
-                                        height: 40,
-                                        child: const Center(
-                                          child: Text(
-                                            '取消订单',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily:"oppoSansBold" ,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                  ),
-                                ],
-                              ) ,
-                            ),
-                          ),*/
+
                           const SizedBox(height: 10,),
 
 
 
 
                         ]),
-                    // 步骤一：选择出行方式
-                    // 步骤二：预约出行
+
                   ],
                 )),
           ),
         ),
       ),
+
     );
   }
+
+
 }
