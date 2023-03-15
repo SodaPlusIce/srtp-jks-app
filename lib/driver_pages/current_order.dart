@@ -141,7 +141,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
     _createInitPointsRoutes();
     // requestPermission();
     _addMarkerInit(); //添加各站点的marker
-    _initCar();
+    // _initCar();
     // _getDriverData();
   }
 
@@ -356,9 +356,9 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
 *
 **/
   _initCar() {
-    socket.emit("app_pos");
-    socket.on("app_pos", (data) {
-      // print(data);
+    socket.emit("app_pos_driver");
+    socket.on("app_pos_driver", (data) {
+      print("666666获取到车辆路线数据");
       _removeAll();
       // print("清除成功");
       for (int i = 0; i < data.length; i++) {
@@ -375,23 +375,22 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   var nextStop;
   var nextStopWaitingNum;
   var passOnBus;
-  _getDriverData(){
+  _getDriverData() {
     socket.emit("driver_info");
     socket.on("driver_info", (data) {
-      setState((){
-        nextStop=data[0];
-        passOnBus=data[1];
-        nextStopWaitingNum=data[2];
+      setState(() {
+        nextStop = data[0];
+        passOnBus = data[1];
+        nextStopWaitingNum = data[2];
       });
 
-      print("666666$data");
-
+      // print("666666$data");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // _initCar();
+    _initCar();
     _getDriverData();
 
     Logger.minLevel = Level.WARNING;
@@ -480,7 +479,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                           }),
                                     ],
                                   ),
-                                   Center(
+                                  Center(
                                     child: Text(
                                       '下一站:$nextStop',
                                       style: const TextStyle(
@@ -510,24 +509,24 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                         BorderRadius.circular(10),
                                       ),
                                       // color: Colors.grey[200],
-                                      color: Colors.greenAccent
-                                      ,
+                                      color: const Color.fromARGB(
+                                          250, 89, 151, 94),
                                       shape: NeumorphicShape.flat,
                                       intensity: 0,
                                     ),
                                     child: Container(
-                                      color: Colors.greenAccent
-                                      ,
+                                      color: const Color.fromARGB(
+                                          250, 89, 151, 94),
                                       width: MediaQuery.of(context).size.width *
                                           0.30,
                                       height: 40,
-                                      child:  Center(
+                                      child: Center(
                                         child: Text(
                                           '当前人数:$passOnBus',
-                                          style:const TextStyle(
-                                            fontSize: 20,
+                                          style: const TextStyle(
+                                            fontSize: 16,
                                             fontFamily: "oppoSansMedium",
-                                            color: Colors.black,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
@@ -554,7 +553,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                       width: MediaQuery.of(context).size.width *
                                           0.30,
                                       height: 40,
-                                      child:  Center(
+                                      child: Center(
                                         child: Text(
                                           '待上车人数:$nextStopWaitingNum',
                                           style: const TextStyle(
