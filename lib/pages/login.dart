@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-import 'user_center/user_history.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -19,7 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   int _seconds = 0;
   bool _loadingImageUrl = true;
-  String _imageUrl =
+  final String _imageUrl =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAAAaCAIAAABw/jbvAAABjElEQVR42s2Y7Q6DIAxF2dxm9v4P7JaYYNeP2wJFZ/ihFS2HlrZQtoGrlDL7W7VbFcq3VLLfl23sGoR0P7c6xCGvJIxwuq8sIx9TUKXv17029Y9Wh3FIwBmBx3buJHw8V9lUfUt57Q0M5basoLkehGdBJ5SQLp4FaRHS+27CiAf1E9K3AJISAkgmiRO6kArh9wMGWR8rofwRI6yKmwirsOJFFnkzIUVSCdWFKgl33YDQGhw1YHfaRLE0eM9+pxJKG7IYiAlTMplOSB2VIlmEch0GCdXpP5WQIamEFE+aRRIyNta/1T/9NGsRqjxMoqYK5n4uoZU50moJa/SuxMJjnE2E0j8TqkI1W1hhykr6QIFKKMMMSxKJVSHyUosQ1DQg0sjGtIAsP7SD6ahrZxDiGHM2YUoAwHuCRKWlo3LPIuze2qcR5mrqhnRL2WQvdXfW6T6cFkubIC804ywv5cc7/034M9rgaU9k1zPjOMs9p3APfkpcx+CKDx4r5TpqdNDHfHhbu+DUgmvQjLLbBy9uOkzsE/1jAAAAAElFTkSuQmCC';
   final phoneFormKey = GlobalKey<FormState>();
   final imageFormKey = GlobalKey<FormState>();

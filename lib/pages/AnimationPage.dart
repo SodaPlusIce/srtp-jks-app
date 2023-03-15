@@ -3,6 +3,9 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:jtjs/pages/my_home_page.dart';
 
+import '../driver_pages/my_home_page.dart';
+import 'login.dart';
+
 void main() {
   runApp(
       MaterialApp(
@@ -33,7 +36,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin{
       if(status == AnimationStatus.completed){
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context){
-              return const MyHomePage();
+              return const DriverHomePage();
             }),
                 (route) => route == null
         );

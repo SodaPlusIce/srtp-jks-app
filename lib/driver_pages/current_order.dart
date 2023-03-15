@@ -71,8 +71,6 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   /// 地图类型
   late MapType _mapType;
 
-
-
   var markerLatitude;
   var markerLongitude;
 
@@ -96,24 +94,18 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   DateTime dateTime = DateTime.now();
   String reserveTime = "选择 时间段";
 
-  /// 预约 上下车点index,name
-  int _selectedOnStation = 0;
-  int _selectedOffStation = 0;
   String _selectedOnStationName = "选择 上车点";
   String _selectedOffStationName = "选择 目的地";
 
-  /// 响应 上下车点index,name
-  int _selectedOnStationNow = 0;
-  int _selectedOffStationNow = 0;
   String _selectedOnStationNameNow = "选择 上车点";
   String _selectedOffStationNameNow = "选择 目的地";
 
   /// 步骤x相关数据
   int _stepIndex = 0;
-  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四","订单页面"];
+  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四", "订单页面"];
 
   /// 上车人数
-  int _passNum = 1;
+  // int _passNum = 1;
 
   /// 分配的车辆名
   String _allo_bus = "";
@@ -126,9 +118,9 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
 
   /// 浮窗栏的文字样式
   var overlayTextStyle =
-  const TextStyle(fontSize: 18, fontFamily: 'oppoSansRegular');
+      const TextStyle(fontSize: 18, fontFamily: 'oppoSansRegular');
   var overlayTitleStyle =
-  const TextStyle(fontSize: 16, fontFamily: 'oppoSansMedium');
+      const TextStyle(fontSize: 16, fontFamily: 'oppoSansMedium');
 
   /// ////////////////////////////初始化程序代码///////////////////////////////////
   @override
@@ -149,10 +141,13 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
     _createInitPointsRoutes();
     // requestPermission();
     _addMarkerInit(); //添加各站点的marker
+    _initCar();
+    // _getDriverData();
   }
+
   /// ////////////////////////////初始化socket的连接内容///////////////////////////
   initSocket() {
-    socket = IO.io(ConstConfig.URL,<String, dynamic>{
+    socket = IO.io(ConstConfig.URL, <String, dynamic>{
       'autoConnect': true,
       'transports': ['websocket'],
     });
@@ -177,18 +172,18 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
       // final ImageConfiguration imageConfiguration =
       //     createLocalImageConfiguration(context);
       Marker marker = Marker(
-        // 修改当前路线的图标
-        // icon: BitmapDescriptor.fromIconPath("assets/images/marker_icon.png"),
+          // 修改当前路线的图标
+          // icon: BitmapDescriptor.fromIconPath("assets/images/marker_icon.png"),
           position: pos,
           infoWindow: InfoWindow(title: _stationNames[i]));
       _initMarkers[marker.id] = marker;
     }
-
   }
 
   //需要先设置一个空的map赋值给AMapWidget的markers，否则后续无法添加marker
   final Map<String, Marker> _initMarkers = <String, Marker>{};
   LatLng _currentLatLng = const LatLng(39.909187, 116.397451);
+
   /// 添加一个marker
   void _addMarker(LatLng pos, int i) {
     final Marker marker = Marker(
@@ -217,7 +212,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
       // final ImageConfiguration imageConfiguration =
       // createLocalImageConfiguration(context);
       Marker marker = Marker(
-        // 修改当前路线的图标
+          // 修改当前路线的图标
           icon: BitmapDescriptor.fromIconPath("assets/images/start.png"),
           position: pos,
           infoWindow: InfoWindow(title: _stationNames[i]));
@@ -228,11 +223,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   /// ///////////////////////////获取审图号///////////////////////////////////////
   void getApprovalNumber() async {
     //普通地图审图号
-    String? mapContentApprovalNumber =
-    await mapController?.getMapContentApprovalNumber();
     //卫星地图审图号
-    String? satelliteImageApprovalNumber =
-    await mapController?.getSatelliteImageApprovalNumber();
   }
 
   @override
@@ -243,28 +234,6 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
     socket.disconnect();
     socket.dispose();
     super.dispose();
-  }
-
-  /// ///////////////////////////显示选择对话框////////////////////////////////////
-  void _showDialog(Widget child) {
-    showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) => Container(
-          height: 216,
-          padding: const EdgeInsets.only(top: 6.0),
-          // The Bottom margin is provided to align the popup above the system
-          // navigation bar.
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          // Provide a background color for the popup.
-          color: CupertinoColors.systemBackground.resolveFrom(context),
-          // Use a SafeArea widget to avoid system overlaps.
-          child: SafeArea(
-            top: false,
-            child: child,
-          ),
-        ));
   }
 
   /// ///////////////////////////弹出"选择出行方式"旁的info按钮对应的对话框////////////
@@ -338,7 +307,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
       // color:Colors.green,
       width: 20,
       customTexture:
-      BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
+          BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
       joinType: JoinType.round,
       points: _createPoints(start, end),
     );
@@ -346,6 +315,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
       _polylines[polyline.id] = polyline;
     });
   }
+
   /// ///////////////////////////根据每次的路线信息去构建整体的路线图//////////////////////////////////
   List<LatLng> pointsOfInitRoute = <LatLng>[];
   Future<List<LatLng>> _createInitPointsRoutes() async {
@@ -356,9 +326,8 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
       List arrs = convert.jsonDecode(res.body);
       print("myTag");
       print(arrs);
-      for(var i = 0; i<arrs.length;i++)
-      {
-        for(var j =0;j<arrs[i].length;j++){
+      for (var i = 0; i < arrs.length; i++) {
+        for (var j = 0; j < arrs[i].length; j++) {
           pointsOfInitRoute.add(LatLng(arrs[i][j][1], arrs[i][j][0]));
         }
       }
@@ -366,7 +335,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
         // color:Colors.green,
         width: 20,
         customTexture:
-        BitmapDescriptor.fromIconPath('assets/images/texture_blue.png'),
+            BitmapDescriptor.fromIconPath('assets/images/texture_blue.png'),
         joinType: JoinType.round,
         points: pointsOfInitRoute,
       );
@@ -380,6 +349,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
     }
     return pointsOfInitRoute;
   }
+
   /// ///////////////////////////利用websocket进行车辆的实时数据传输/////////////////
 /*
 * 初始化的时候，将车辆的数据显示在屏幕上
@@ -400,9 +370,29 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
       }
     });
   }
+
+  /// //利用socket进行司机页面 下一站，车上人数，下一站等待人数 的实时传输//
+  var nextStop;
+  var nextStopWaitingNum;
+  var passOnBus;
+  _getDriverData(){
+    socket.emit("driver_info");
+    socket.on("driver_info", (data) {
+      setState((){
+        nextStop=data[0];
+        passOnBus=data[1];
+        nextStopWaitingNum=data[2];
+      });
+
+      print("666666$data");
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    _initCar();
+    // _initCar();
+    _getDriverData();
 
     Logger.minLevel = Level.WARNING;
     final AMapWidget map = AMapWidget(
@@ -462,66 +452,81 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                 borderRadius: BorderRadius.circular(25),
                               ),
                               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              color: Color.fromARGB(255, 249, 215, 138),
+                              color: Colors.white70,
                               shadowColor:
-                              const Color.fromARGB(250, 231, 241, 251),
+                                  const Color.fromARGB(250, 231, 241, 251),
                               elevation: 20,
                               child: Column(
                                 children: [
                                   Row(
                                     children: [
-                                      SizedBox(height: 30,),
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
                                       Padding(
-                                          padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width*0.7, 0, 0, 0)),
+                                          padding: EdgeInsets.fromLTRB(
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.7,
+                                              0,
+                                              0,
+                                              0)),
                                       IconButton(
                                           padding: const EdgeInsets.all(0),
-                                          icon:
-                                          const Icon(Icons.info_outlined),
+                                          icon: const Icon(Icons.info_outlined),
                                           onPressed: () {
                                             showDeleteConfirmDialog();
                                           }),
                                     ],
                                   ),
-                                  const  Center(
+                                   Center(
                                     child: Text(
-                                      '下一站：银子桥村',
-                                      style: TextStyle(
+                                      '下一站:$nextStop',
+                                      style: const TextStyle(
                                         fontSize: 40,
-                                        fontWeight: FontWeight.w900,
+                                        fontFamily: "oppoSansBold",
+                                        // fontWeight: FontWeight.w900,
                                         color: Colors.black,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 30,),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
                                 ],
-                              )
+                              )),
+                          const SizedBox(
+                            height: 10,
                           ),
-                          const SizedBox(height: 10,),
                           Center(
-                            child:Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(
                                   child: NeumorphicButton(
                                     style: NeumorphicStyle(
                                       boxShape: NeumorphicBoxShape.roundRect(
-                                        BorderRadius.circular(20),
+                                        BorderRadius.circular(10),
                                       ),
                                       // color: Colors.grey[200],
-                                      color: Colors.green,
+                                      color: Colors.greenAccent
+                                      ,
                                       shape: NeumorphicShape.flat,
                                       intensity: 0,
                                     ),
                                     child: Container(
-                                      color: Colors.green,
-                                      width: MediaQuery.of(context).size.width * 0.30,
+                                      color: Colors.greenAccent
+                                      ,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.30,
                                       height: 40,
-                                      child: const Center(
+                                      child:  Center(
                                         child: Text(
-                                          '当前人数',
-                                          style: TextStyle(
+                                          '当前人数:$passOnBus',
+                                          style:const TextStyle(
                                             fontSize: 20,
-                                            fontFamily:"oppoSansBold" ,
+                                            fontFamily: "oppoSansMedium",
                                             color: Colors.black,
                                           ),
                                         ),
@@ -530,29 +535,32 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                     onPressed: () {},
                                   ),
                                 ),
-                                const SizedBox(width: 20,),
+                                const SizedBox(
+                                  width: 20,
+                                ),
                                 Center(
                                   child: NeumorphicButton(
                                     style: NeumorphicStyle(
                                       boxShape: NeumorphicBoxShape.roundRect(
-                                        BorderRadius.circular(20),
+                                        BorderRadius.circular(10),
                                       ),
                                       // color: Colors.grey[200],
-                                      color: Colors.red,
+                                      color: Colors.blueAccent,
                                       intensity: 0,
                                       shape: NeumorphicShape.flat,
                                     ),
                                     child: Container(
-                                      color: Colors.red,
-                                      width: MediaQuery.of(context).size.width * 0.30,
+                                      color: Colors.blueAccent,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.30,
                                       height: 40,
-                                      child: const Center(
+                                      child:  Center(
                                         child: Text(
-                                          '待上车人数',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontFamily:"oppoSansBold" ,
-                                            color: Colors.black,
+                                          '待上车人数:$nextStopWaitingNum',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "oppoSansMedium",
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
@@ -561,24 +569,17 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
                                   ),
                                 ),
                               ],
-                            ) ,
+                            ),
                           ),
-
-                          const SizedBox(height: 10,),
-
-
-
-
+                          const SizedBox(
+                            height: 10,
+                          ),
                         ]),
-
                   ],
                 )),
           ),
         ),
       ),
-
     );
   }
-
-
 }

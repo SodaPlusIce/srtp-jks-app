@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jtjs/config/color.dart';
-import 'package:jtjs/driver_pages/my_home_page.dart';
 import 'package:jtjs/pages/AnimationPage.dart';
-import 'package:jtjs/pages/login.dart';
-import 'package:jtjs/pages/my_home_page.dart';
-import 'package:jtjs/pages/temp.dart';
-import './pages/location.dart';
-import './pages/map.dart';
-import './pages/user_center.dart';
 import 'package:via_logger/via_logger.dart';
-
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {

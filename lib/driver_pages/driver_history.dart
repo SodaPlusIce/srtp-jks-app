@@ -58,7 +58,7 @@ class _DriverHisPageState extends State<DriverHisPage> {
             trailing:  Text(
               "共消费$passengers元",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 23,
                 fontFamily: "oppoSansMedium",
                 color: Colors.black,
