@@ -335,7 +335,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
         // color:Colors.green,
         width: 20,
         customTexture:
-            BitmapDescriptor.fromIconPath('assets/images/texture_blue.png'),
+            BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
         joinType: JoinType.round,
         points: pointsOfInitRoute,
       );
