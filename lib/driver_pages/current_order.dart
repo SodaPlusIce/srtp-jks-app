@@ -94,9 +94,21 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
   DateTime dateTime = DateTime.now();
   String reserveTime = "选择 时间段";
 
+  String _selectedOnStationName = "选择 上车点";
+  String _selectedOffStationName = "选择 目的地";
 
+  String _selectedOnStationNameNow = "选择 上车点";
+  String _selectedOffStationNameNow = "选择 目的地";
 
+  /// 步骤x相关数据
+  int _stepIndex = 0;
+  final List<String> _stepName = <String>["步骤一", "步骤二", "步骤三", "步骤四", "订单页面"];
 
+  /// 上车人数
+  // int _passNum = 1;
+
+  /// 分配的车辆名
+  String _allo_bus = "";
 
   /// 定义出polyline
   final Map<String, Polyline> _polylines = <String, Polyline>{};
@@ -323,7 +335,7 @@ class _CurrentOrderPageState extends State<CurrentOrderPage> {
         // color:Colors.green,
         width: 20,
         customTexture:
-            BitmapDescriptor.fromIconPath('assets/images/texture_blue.png'),
+            BitmapDescriptor.fromIconPath('assets/images/texture_green.png'),
         joinType: JoinType.round,
         points: pointsOfInitRoute,
       );

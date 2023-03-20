@@ -40,7 +40,7 @@ class _UserWallPageState extends State<UserWallPage> {
                 ),
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 // color: const Color.fromARGB(250, 255, 255, 255),
-                 color:  Colors.greenAccent[400],
+                 color:  Colors.blueGrey,
                  borderOnForeground: false,
                  elevation: 0,
                 // elevation: 10,
@@ -60,7 +60,7 @@ class _UserWallPageState extends State<UserWallPage> {
                           fontFamily: "oppoSansBold",
                           color: Colors.white,
                         ),),
-                        trailing: Text("2000元",style: TextStyle(
+                        trailing: Text("33元",style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.w900,
                           color: Colors.black,
@@ -75,7 +75,7 @@ class _UserWallPageState extends State<UserWallPage> {
 
                           color: Colors.white,
                         ),),
-                        trailing: Text("5500元",style: TextStyle(
+                        trailing: Text("22元",style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.w900,
                           color: Colors.black,
@@ -263,19 +263,19 @@ class _UserWallPageState extends State<UserWallPage> {
                               children: const[
                                 ListTile(
                                   leading: Icon(Icons.money_off,color:  Color.fromARGB(250, 233, 46, 75),size: 40,),
-                                  title:  Text("出发点：广州",style: TextStyle(
+                                  title:  Text("出发站：南坝村",style: TextStyle(
                                     fontSize: 18,
                                     fontFamily: "oppoSansRegular",
                                     // fontWeight: FontWeight.w700,
                                     color: Colors.black,
                                   ),),
-                                  subtitle:  Text("终点站：上海",style: TextStyle(
+                                  subtitle:  Text("终点站：换乘中心",style: TextStyle(
                                     fontSize: 18,
                                     fontFamily: "oppoSansRegular",
                                     // fontWeight: FontWeight.w700,
                                     color: Colors.black,
                                   ),),
-                                  trailing:  Text("消费50元",style: TextStyle(
+                                  trailing:  Text("消费1元",style: TextStyle(
                                     fontSize: 23,
                                     fontFamily: "oppoSansMedium",
                                     // fontWeight: FontWeight.w900,
@@ -296,7 +296,7 @@ class _UserWallPageState extends State<UserWallPage> {
                                   ListTile(
                                     leading: Icon(Icons.money, color: Color.fromARGB(250, 233, 46, 75),size: 40,),
 
-                                    trailing:  Text("提现60元",style: TextStyle(
+                                    trailing:  Text("提现10元",style: TextStyle(
                                       fontSize: 23,
                                       fontFamily: "oppoSansMedium",
                                       /* fontSize: 16,
@@ -318,7 +318,7 @@ class _UserWallPageState extends State<UserWallPage> {
                                   ListTile(
                                     leading: Icon(Icons.money, color: Color.fromARGB(250, 42, 173, 103),size: 40,),
 
-                                    trailing:  Text("充值100元",style: TextStyle(
+                                    trailing:  Text("充值20元",style: TextStyle(
                                       fontSize: 23,
                                       fontFamily: "oppoSansMedium",
                                       /*fontSize: 16,
