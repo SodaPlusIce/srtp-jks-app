@@ -36,7 +36,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin{
       if(status == AnimationStatus.completed){
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context){
-              return const DriverHomePage();
+              return const MyHomePage();
             }),
                 (route) => route == null
         );

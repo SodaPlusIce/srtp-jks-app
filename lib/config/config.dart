@@ -23,7 +23,7 @@ class ConstConfig {
   static const AMapPrivacyStatement amapPrivacyStatement =
       AMapPrivacyStatement(hasContains: true, hasShow: true, hasAgree: true);
   /// 连接后端的接口信息
-  static const YOUR_SERVER_IP = '192.168.65.27';
+  static const YOUR_SERVER_IP = '192.168.58.27';
   static const YOUR_SERVER_PORT = '5000';
   static const String netip = 'http://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';
   static const URL = 'ws://$YOUR_SERVER_IP:$YOUR_SERVER_PORT';

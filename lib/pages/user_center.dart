@@ -193,7 +193,7 @@ class _CenterPageState extends State<CenterPage> {
                                 builder: (context) => const UserInfoPage()));*/
                       },
                       child: const Text(
-                        "zcc",
+                        "白杨",
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 26,
@@ -235,7 +235,7 @@ class _CenterPageState extends State<CenterPage> {
               // 这段做个人信息内容
               ListTile(
                 title: Text(
-                  "姓名: zcc",
+                  "姓名: 白杨",
                   style: unionTextStyle,
                 ),
                 onTap: (){},

@@ -401,6 +401,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     _initCar();
+    // _createInitPointsRoutes();
 
     Logger.minLevel = Level.WARNING;
     final AMapWidget map = AMapWidget(
